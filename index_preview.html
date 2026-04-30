@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beta Alpha Psi — Samford University</title>
+  <meta name="description" content="Samford University's Beta Alpha Psi chapter — the premier honor society for accounting, finance, and information systems students at the Brock School of Business.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --crimson: #8B1A1A;
+      --crimson-dark: #6B1414;
+      --navy: #1B2A4A;
+      --navy-light: #2A3D66;
+      --gold: #C4A35A;
+      --gold-light: #D4B96E;
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE1;
+      --text-primary: #1A1A1A;
+      --text-secondary: #4A4A4A;
+      --text-light: #6B6B6B;
+      --white: #FFFFFF;
+      --serif: 'Libre Baskerville', Georgia, serif;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--sans);
+      color: var(--text-primary);
+      background-color: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: var(--white);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      transition: box-shadow 0.3s ease;
+    }
+
+    nav.scrolled {
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-brand {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--crimson);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links a:hover {
+      color: var(--crimson);
+    }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text-primary);
+      margin: 5px 0;
+      transition: all 0.3s ease;
+    }
+
+    /* ── Sections ── */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+      line-height: 1.25;
+    }
+
+    .section-intro {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--navy);
+      color: var(--white);
+      padding: 8rem 2rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(139,26,26,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 80%, rgba(196,163,90,0.1) 0%, transparent 50%);
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 720px;
+    }
+
+    .hero-society {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-university {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+    }
+
+    .hero-tagline {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.65);
+      max-width: 520px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: var(--crimson);
+      color: var(--white);
+      padding: 0.9rem 2.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .hero-cta:hover {
+      background: var(--crimson-dark);
+      transform: translateY(-1px);
+    }
+
+    /* ── About / Pillars ── */
+    .about {
+      background: var(--white);
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+
+    .pillar {
+      padding: 2.5rem 2rem;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 8px;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .pillar:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      transform: translateY(-2px);
+    }
+
+    .pillar-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+    }
+
+    .pillar-icon.professional { background: rgba(139,26,26,0.08); color: var(--crimson); }
+    .pillar-icon.technical { background: rgba(27,42,74,0.08); color: var(--navy); }
+    .pillar-icon.service { background: rgba(196,163,90,0.12); color: var(--gold); }
+
+    .pillar h3 {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .pillar p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ── Events ── */
+    .events {
+      background: var(--cream);
+    }
+
+    .event-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .event-filter {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.825rem;
+      font-weight: 500;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 100px;
+      background: var(--white);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .event-filter:hover,
+    .event-filter.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .events-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .event-card {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--white);
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s;
+    }
+
+    .event-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+
+    .event-date {
+      text-align: center;
+    }
+
+    .event-month {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--crimson);
+    }
+
+    .event-day {
+      font-family: var(--serif);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .event-info h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .event-info p {
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+
+    .event-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .event-tag.professional { background: rgba(139,26,26,0.08); color: var(--crimson); }
+    .event-tag.technical { background: rgba(27,42,74,0.08); color: var(--navy); }
+    .event-tag.service { background: rgba(196,163,90,0.12); color: #8B7332; }
+    .event-tag.social { background: rgba(100,140,100,0.1); color: #3D6B3D; }
+
+    /* ── Resources ── */
+    .resources {
+      background: var(--white);
+    }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .resource-card {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.5rem 1.75rem;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .resource-card:hover {
+      border-color: var(--crimson);
+      box-shadow: 0 4px 16px rgba(139,26,26,0.06);
+    }
+
+    .resource-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .resource-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .resource-card p {
+      font-size: 0.825rem;
+      color: var(--text-light);
+    }
+
+    /* ── Service ── */
+    .service-section {
+      background: var(--cream);
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem;
+    }
+
+    .service-item {
+      padding: 2.5rem;
+      background: var(--white);
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .service-item h3 {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .service-item p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .service-item p:last-child {
+      margin-bottom: 0;
+    }
+
+    .service-highlight {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+
+    .service-note {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      background: var(--navy);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .service-note strong {
+      color: var(--gold-light);
+    }
+
+    /* ── Join / Contact ── */
+    .join {
+      background: var(--white);
+    }
+
+    .join-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .join-info h3 {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .join-info p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .eligibility-list {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .eligibility-list li {
+      padding: 0.6rem 0;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .eligibility-list li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+
+    .join-contact {
+      padding: 2.5rem;
+      background: var(--cream);
+      border-radius: 8px;
+    }
+
+    .join-contact h3 {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .join-contact p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      background: var(--crimson);
+      color: var(--white);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.2s, transform 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .contact-link:hover {
+      background: var(--crimson-dark);
+      transform: translateY(-1px);
+    }
+
+    .contact-email {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+    }
+
+    .contact-email a {
+      color: var(--crimson);
+      text-decoration: none;
+    }
+
+    .contact-email a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 0.825rem;
+    }
+
+    footer a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-brand {
+      font-family: var(--serif);
+      font-size: 1rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Scroll animations ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      section {
+        padding: 4rem 1.25rem;
+      }
+
+      .hero {
+        padding: 7rem 1.5rem 4rem;
+        min-height: auto;
+      }
+
+      .hero h1 {
+        font-size: 2.25rem;
+      }
+
+      .hero-university {
+        font-size: 1.1rem;
+      }
+
+      .hero-tagline {
+        font-size: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        flex-direction: column;
+        padding: 1rem 2rem 1.5rem;
+        gap: 0;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links li a {
+        display: block;
+        padding: 0.75rem 0;
+      }
+
+      .nav-toggle {
+        display: block;
+      }
+
+      .nav-toggle.open span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      .nav-toggle.open span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .nav-toggle.open span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      .pillars {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .event-card {
+        grid-template-columns: 60px 1fr;
+        gap: 1rem;
+        padding: 1.25rem;
+      }
+
+      .event-tag {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .resources-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .service-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .join-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-brand">Beta Alpha Psi</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#resources">Resources</a></li>
+        <li><a href="#service">Service</a></li>
+        <li><a href="#join">Join</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <p class="hero-society">International Honor Society</p>
+      <h1>Beta Alpha Psi</h1>
+      <p class="hero-university">Samford University &middot; Brock School of Business</p>
+      <p class="hero-tagline">Preparing tomorrow's leaders in accounting, finance, and information systems through professional development, technical excellence, and service.</p>
+      <a href="#join" class="hero-cta">Become a Member</a>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="container">
+      <p class="section-label fade-in">Our Mission</p>
+      <h2 class="section-title fade-in">Three Pillars of Excellence</h2>
+      <p class="section-intro fade-in">Beta Alpha Psi recognizes outstanding academic achievement and complements members' formal education with professional development, technical knowledge, and a commitment to service.</p>
+      <div class="pillars">
+        <div class="pillar fade-in">
+          <div class="pillar-icon professional">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          </div>
+          <h3>Professional Development</h3>
+          <p>Connect with top firms, build your network, and gain the skills employers look for — from resume workshops to panel discussions with industry professionals.</p>
+        </div>
+        <div class="pillar fade-in">
+          <div class="pillar-icon technical">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Technical Excellence</h3>
+          <p>Go beyond the classroom with hands-on workshops in Excel, Power BI, Tableau, and other tools that set you apart in a data-driven profession.</p>
+        </div>
+        <div class="pillar fade-in">
+          <div class="pillar-icon service">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3>Community Service</h3>
+          <p>Give back through VITA tax preparation, financial literacy outreach, and community partnerships — making a real difference with your professional knowledge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events -->
+  <section class="events" id="events">
+    <div class="container">
+      <p class="section-label fade-in">What's Coming Up</p>
+      <h2 class="section-title fade-in">Upcoming Events</h2>
+      <p class="section-intro fade-in">From networking nights to technical workshops, there's always something happening. All events are open to current members.</p>
+
+      <div class="event-filters fade-in">
+        <button class="event-filter active" data-filter="all">All Events</button>
+        <button class="event-filter" data-filter="professional">Professional</button>
+        <button class="event-filter" data-filter="technical">Technical</button>
+        <button class="event-filter" data-filter="service">Service</button>
+        <button class="event-filter" data-filter="social">Social</button>
+      </div>
+
+      <div class="events-grid">
+        <div class="event-card fade-in" data-category="social">
+          <div class="event-date">
+            <div class="event-month">Sep</div>
+            <div class="event-day">5</div>
+          </div>
+          <div class="event-info">
+            <h4>Fall Kickoff</h4>
+            <p>Welcome back meeting &middot; Brock School of Business, Room 230</p>
+          </div>
+          <span class="event-tag social">Social</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="professional">
+          <div class="event-date">
+            <div class="event-month">Sep</div>
+            <div class="event-day">18</div>
+          </div>
+          <div class="event-info">
+            <h4>Meet the Firms — Panel Q&amp;A</h4>
+            <p>Network with recruiters from Big 4 and regional firms &middot; Cooney Hall</p>
+          </div>
+          <span class="event-tag professional">Professional</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="technical">
+          <div class="event-date">
+            <div class="event-month">Oct</div>
+            <div class="event-day">2</div>
+          </div>
+          <div class="event-info">
+            <h4>Excel Workshop — Beginner</h4>
+            <p>Formulas, pivot tables, and formatting essentials &middot; Computer Lab B</p>
+          </div>
+          <span class="event-tag technical">Technical</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="professional">
+          <div class="event-date">
+            <div class="event-month">Oct</div>
+            <div class="event-day">10</div>
+          </div>
+          <div class="event-info">
+            <h4>Resume &amp; LinkedIn Review Night</h4>
+            <p>One-on-one feedback from professionals &middot; Brock School of Business</p>
+          </div>
+          <span class="event-tag professional">Professional</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="service">
+          <div class="event-date">
+            <div class="event-month">Oct</div>
+            <div class="event-day">22</div>
+          </div>
+          <div class="event-info">
+            <h4>Financial Literacy Workshop</h4>
+            <p>Teaching budgeting basics at local high schools &middot; Off campus</p>
+          </div>
+          <span class="event-tag service">Service</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="technical">
+          <div class="event-date">
+            <div class="event-month">Nov</div>
+            <div class="event-day">6</div>
+          </div>
+          <div class="event-info">
+            <h4>Power BI &amp; Tableau Intro Session</h4>
+            <p>Data visualization for business students &middot; Computer Lab A</p>
+          </div>
+          <span class="event-tag technical">Technical</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="professional">
+          <div class="event-date">
+            <div class="event-month">Nov</div>
+            <div class="event-day">14</div>
+          </div>
+          <div class="event-info">
+            <h4>"Day in the Life" Alumni Zoom Series</h4>
+            <p>Hear from Samford BAP alumni in the field &middot; Virtual</p>
+          </div>
+          <span class="event-tag professional">Professional</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="social">
+          <div class="event-date">
+            <div class="event-month">Nov</div>
+            <div class="event-day">20</div>
+          </div>
+          <div class="event-info">
+            <h4>Exam Study Groups</h4>
+            <p>Collaborative study sessions before finals &middot; Library, 3rd Floor</p>
+          </div>
+          <span class="event-tag social">Social</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="technical">
+          <div class="event-date">
+            <div class="event-month">Jan</div>
+            <div class="event-day">23</div>
+          </div>
+          <div class="event-info">
+            <h4>CPA Exam Info Night</h4>
+            <p>Everything you need to know about the CPA journey &middot; Brock 210</p>
+          </div>
+          <span class="event-tag technical">Technical</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="service">
+          <div class="event-date">
+            <div class="event-month">Feb</div>
+            <div class="event-day">8</div>
+          </div>
+          <div class="event-info">
+            <h4>VITA Tax Prep Volunteering</h4>
+            <p>Free tax preparation for low-income families &middot; Community Center</p>
+          </div>
+          <span class="event-tag service">Service</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="technical">
+          <div class="event-date">
+            <div class="event-month">Mar</div>
+            <div class="event-day">5</div>
+          </div>
+          <div class="event-info">
+            <h4>Excel Workshop — Advanced</h4>
+            <p>Macros, VBA basics, and complex modeling &middot; Computer Lab B</p>
+          </div>
+          <span class="event-tag technical">Technical</span>
+        </div>
+
+        <div class="event-card fade-in" data-category="social">
+          <div class="event-date">
+            <div class="event-month">Apr</div>
+            <div class="event-day">18</div>
+          </div>
+          <div class="event-info">
+            <h4>End-of-Year Banquet</h4>
+            <p>Celebrate the year's achievements &middot; Location TBA</p>
+          </div>
+          <span class="event-tag social">Social</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section class="resources" id="resources">
+    <div class="container">
+      <p class="section-label fade-in">Quick Links</p>
+      <h2 class="section-title fade-in">Resources</h2>
+      <p class="section-intro fade-in">Helpful links for current and prospective members.</p>
+
+      <div class="resources-grid">
+        <a href="https://www.bap.org" target="_blank" rel="noopener" class="resource-card fade-in">
+          <div class="resource-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M2 10h16M10 2a12.3 12.3 0 014 8 12.3 12.3 0 01-4 8 12.3 12.3 0 01-4-8 12.3 12.3 0 014-8z"/></svg>
+          </div>
+          <div>
+            <h4>BAP National Organization</h4>
+            <p>Official Beta Alpha Psi International website</p>
+          </div>
+        </a>
+
+        <a href="https://nasba.org/exams/cpaexam/" target="_blank" rel="noopener" class="resource-card fade-in">
+          <div class="resource-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H18"/><path d="M6.5 2H18v18H6.5A2.5 2.5 0 014 17.5v-13A2.5 2.5 0 016.5 2z"/></svg>
+          </div>
+          <div>
+            <h4>CPA Exam Information</h4>
+            <p>NASBA resources, requirements, and registration</p>
+          </div>
+        </a>
+
+        <a href="https://www.samford.edu/business/" target="_blank" rel="noopener" class="resource-card fade-in">
+          <div class="resource-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l7-7 7 7"/><path d="M9 21V9h2v12"/></svg>
+          </div>
+          <div>
+            <h4>Brock School of Business</h4>
+            <p>Samford University's business school</p>
+          </div>
+        </a>
+
+        <a href="#join" class="resource-card fade-in">
+          <div class="resource-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L2 21l1.9-6.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <div>
+            <h4>Chapter GroupMe</h4>
+            <p>Stay connected — link shared after joining</p>
+          </div>
+        </a>
+
+        <a href="https://www.thiswaytocpa.com/" target="_blank" rel="noopener" class="resource-card fade-in">
+          <div class="resource-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+          </div>
+          <div>
+            <h4>This Way to CPA</h4>
+            <p>AICPA career resources for aspiring CPAs</p>
+          </div>
+        </a>
+
+        <a href="https://www.linkedin.com" target="_blank" rel="noopener" class="resource-card fade-in">
+          <div class="resource-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+          </div>
+          <div>
+            <h4>LinkedIn Tips</h4>
+            <p>Build your professional presence online</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service -->
+  <section class="service-section" id="service">
+    <div class="container">
+      <p class="section-label fade-in">Giving Back</p>
+      <h2 class="section-title fade-in">Community Service</h2>
+      <p class="section-intro fade-in">Service is at the heart of Beta Alpha Psi. Our chapter puts professional skills to work for the community through ongoing outreach programs.</p>
+
+      <div class="service-grid">
+        <div class="service-item fade-in">
+          <h3>VITA Tax Preparation</h3>
+          <p>Each spring, our members volunteer as IRS-certified tax preparers through the Volunteer Income Tax Assistance program. We provide free tax preparation services to low-income individuals and families in the Birmingham area who might not otherwise have access to professional help.</p>
+          <p class="service-highlight">Members earn IRS certification and gain real-world tax experience.</p>
+        </div>
+
+        <div class="service-item fade-in">
+          <h3>Financial Literacy Outreach</h3>
+          <p>We partner with local high schools to teach students the fundamentals of personal finance — budgeting, saving, understanding credit, and planning for college expenses. Our members develop and lead interactive workshops throughout the school year.</p>
+          <p class="service-highlight">Reaching the next generation with practical financial skills.</p>
+        </div>
+
+        <div class="service-note fade-in">
+          <strong>Service is a core requirement of BAP membership.</strong> Beta Alpha Psi's national organization emphasizes community service hours as a key component of chapter activity. Our members consistently exceed the national minimum, reflecting our chapter's commitment to using professional knowledge for public good.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join / Contact -->
+  <section class="join" id="join">
+    <div class="container">
+      <p class="section-label fade-in">Get Involved</p>
+      <h2 class="section-title fade-in">Join Our Chapter</h2>
+
+      <div class="join-grid">
+        <div class="join-info fade-in">
+          <h3>Eligibility</h3>
+          <p>Beta Alpha Psi is open to students who meet the following criteria:</p>
+          <ul class="eligibility-list">
+            <li>Enrolled in accounting, finance, or information systems at Samford University</li>
+            <li>Completed at least one upper-level course in your major</li>
+            <li>Maintain a minimum 3.0 overall GPA and 3.25 major GPA</li>
+            <li>Committed to attending chapter meetings and completing service hours</li>
+          </ul>
+          <h3>How to Join</h3>
+          <p>We accept new members each fall and spring semester. Attend our kickoff meeting to learn more, or reach out to our officers to get started. Active membership requires participation in professional events, technical workshops, and community service activities throughout the semester.</p>
+        </div>
+
+        <div class="join-contact fade-in">
+          <h3>Contact Us</h3>
+          <p>Have questions about membership, events, or our chapter? We'd love to hear from you.</p>
+          <a href="mailto:bap@samford.edu" class="contact-link">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+            Email Us
+          </a>
+          <span class="contact-email">Or reach us directly at <a href="mailto:bap@samford.edu">bap@samford.edu</a></span>
+
+          <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
+            <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--navy); margin-bottom: 0.5rem;">Find Us</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+              Brock School of Business<br>
+              Samford University<br>
+              800 Lakeshore Drive<br>
+              Birmingham, AL 35229
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-brand">Beta Alpha Psi — Samford University</div>
+    <p>Brock School of Business &middot; Birmingham, Alabama</p>
+    <p style="margin-top: 0.75rem;">
+      &copy; 2026 Samford University Beta Alpha Psi Chapter &middot;
+      <a href="https://www.bap.org" target="_blank" rel="noopener">BAP National</a> &middot;
+      <a href="https://www.samford.edu" target="_blank" rel="noopener">Samford University</a>
+    </p>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', () => {
+      navToggle.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('open');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // Scroll-reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Event filters
+    const filters = document.querySelectorAll('.event-filter');
+    const eventCards = document.querySelectorAll('.event-card');
+
+    filters.forEach(filter => {
+      filter.addEventListener('click', () => {
+        filters.forEach(f => f.classList.remove('active'));
+        filter.classList.add('active');
+        const category = filter.dataset.filter;
+
+        eventCards.forEach(card => {
+          if (category === 'all' || card.dataset.category === category) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
