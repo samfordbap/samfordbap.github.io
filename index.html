@@ -436,6 +436,94 @@
       color: var(--text-light);
     }
 
+    /* ── Firms ── */
+    .firms {
+      background: var(--cream);
+    }
+
+    .firms-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .firm-card {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .firm-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+      transform: translateY(-2px);
+    }
+
+    .firm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .firm-card h3 {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: var(--navy);
+    }
+
+    .firm-hiring {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 100px;
+      background: rgba(45,122,58,0.1);
+      color: #2D7A3A;
+    }
+
+    .firm-type {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .firm-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 0.75rem;
+    }
+
+    .firm-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .firm-detail {
+      font-size: 0.775rem;
+      color: var(--text-light);
+      background: var(--cream);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+    }
+
+    .firm-link {
+      display: inline-block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--crimson);
+      text-decoration: none;
+      margin-top: 0.5rem;
+    }
+
+    .firm-link:hover { text-decoration: underline; }
+
     /* ── Service ── */
     .service-section {
       background: var(--cream);
@@ -722,6 +810,10 @@
         grid-template-columns: 1fr;
       }
 
+      .firms-grid {
+        grid-template-columns: 1fr;
+      }
+
       .service-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
@@ -748,6 +840,7 @@
         <li><a href="#events">Events</a></li>
         <li><a href="#resources">Resources</a></li>
         <li><a href="#service">Service</a></li>
+        <li><a href="#firms">Firms</a></li>
         <li><a href="#join">Join</a></li>
       </ul>
     </div>
@@ -915,6 +1008,18 @@
     </div>
   </section>
 
+  <!-- Firms -->
+  <section class="firms" id="firms">
+    <div class="container">
+      <p class="section-label fade-in">Local Opportunities</p>
+      <h2 class="section-title fade-in">Accounting Firms</h2>
+      <p class="section-intro fade-in">Local and regional firms that recruit from Samford. Check back for updated hiring info and opportunities.</p>
+      <div class="firms-grid" id="firmsGrid">
+        <p style="color: var(--text-light); font-size: 0.95rem;">Loading firms...</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Join / Contact -->
   <section class="join" id="join">
     <div class="container">
@@ -1061,6 +1166,42 @@
         applyFilter();
       });
     });
+
+    // Load firms from Firebase
+    function renderFirms(firms) {
+      const grid = document.getElementById('firmsGrid');
+      if (!firms || firms.length === 0) {
+        grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">Firm listings coming soon — check back later!</p>';
+        return;
+      }
+      firms.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      grid.innerHTML = firms.map(firm => {
+        const hiringBadge = firm.hiring ? '<span class="firm-hiring">Hiring</span>' : '';
+        const website = firm.website ? '<a href="' + firm.website + '" target="_blank" rel="noopener" class="firm-link">Visit Website &rarr;</a>' : '';
+        const details = [];
+        if (firm.location) details.push(firm.location);
+        if (firm.size) details.push(firm.size);
+        if (firm.specialties) details.push(firm.specialties);
+        const detailsHtml = details.length ? '<div class="firm-details">' + details.map(d => '<span class="firm-detail">' + d + '</span>').join('') + '</div>' : '';
+        return '<div class="firm-card fade-in">' +
+          '<div class="firm-header"><h3>' + (firm.name || '') + '</h3>' + hiringBadge + '</div>' +
+          (firm.type ? '<div class="firm-type">' + firm.type + '</div>' : '') +
+          (firm.description ? '<p>' + firm.description + '</p>' : '') +
+          detailsHtml +
+          website +
+        '</div>';
+      }).join('');
+      grid.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }
+
+    fetch(FIREBASE_DB_URL + '/firms.json')
+      .then(r => r.json())
+      .then(data => {
+        if (!data) { renderFirms([]); return; }
+        const firms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        renderFirms(firms);
+      })
+      .catch(() => renderFirms([]));
 
     // Fetch events
     fetch(FIREBASE_DB_URL + '/events.json')

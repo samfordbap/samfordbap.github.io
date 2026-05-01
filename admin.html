@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BAP Admin — Manage Events</title>
+  <title>BAP Admin — Manage Events & Firms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -399,7 +399,7 @@
   <!-- Admin Panel -->
   <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
-      <h1>BAP Event Manager</h1>
+      <h1>BAP Admin</h1>
       <div class="admin-header-right">
         <a href="index.html" class="view-site-link">View Site</a>
         <button class="btn btn-logout" id="logoutBtn">Log Out</button>
@@ -457,6 +457,77 @@
 
       <!-- Event List -->
       <div id="eventList"></div>
+
+      <!-- Firms Section -->
+      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(0,0,0,0.06);">
+        <div class="admin-toolbar">
+          <h2>Firms <span class="event-count" id="firmCount"></span></h2>
+          <button class="btn btn-add" id="addFirmBtn">+ Add Firm</button>
+        </div>
+
+        <div class="event-form" id="firmForm">
+          <h3 id="firmFormTitle">Add New Firm</h3>
+          <input type="hidden" id="firmEditId">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Firm Name</label>
+              <input type="text" id="firmName" placeholder="e.g. PricewaterhouseCoopers">
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select id="firmType">
+                <option value="Big 4">Big 4</option>
+                <option value="National">National</option>
+                <option value="Regional">Regional</option>
+                <option value="Local">Local</option>
+                <option value="Industry">Industry</option>
+                <option value="Government">Government</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="firmLocation" placeholder="e.g. Birmingham, AL">
+            </div>
+            <div class="form-group">
+              <label>Size / Employees</label>
+              <input type="text" id="firmSize" placeholder="e.g. 50-200 employees">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Description</label>
+              <textarea id="firmDescription" placeholder="Brief description of the firm and what they do"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Specialties</label>
+              <input type="text" id="firmSpecialties" placeholder="e.g. Audit, Tax, Advisory">
+            </div>
+            <div class="form-group">
+              <label>Website URL</label>
+              <input type="url" id="firmWebsite" placeholder="e.g. https://www.pwc.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Currently Hiring?</label>
+              <select id="firmHiring">
+                <option value="true">Yes — Hiring</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-save" id="saveFirmBtn">Save Firm</button>
+            <button class="btn btn-cancel" id="cancelFirmBtn">Cancel</button>
+          </div>
+        </div>
+
+        <div id="firmList"></div>
+      </div>
     </div>
   </div>
 
@@ -491,6 +562,7 @@
       loginScreen.style.display = 'none';
       adminPanel.style.display = 'block';
       loadEvents();
+      loadFirms();
     }
 
     async function attemptLogin() {
@@ -500,6 +572,7 @@
         loginScreen.style.display = 'none';
         adminPanel.style.display = 'block';
         loadEvents();
+        loadFirms();
       } else {
         loginError.style.display = 'block';
         passwordInput.value = '';
@@ -650,6 +723,140 @@
         loadEvents();
       } catch (err) {
         showToast('Error deleting event.');
+      }
+    }
+
+    // ── Firms Management ──
+    const firmForm = document.getElementById('firmForm');
+    const addFirmBtn = document.getElementById('addFirmBtn');
+    const cancelFirmBtn = document.getElementById('cancelFirmBtn');
+    const saveFirmBtn = document.getElementById('saveFirmBtn');
+
+    addFirmBtn.addEventListener('click', () => {
+      document.getElementById('firmEditId').value = '';
+      document.getElementById('firmFormTitle').textContent = 'Add New Firm';
+      document.getElementById('firmName').value = '';
+      document.getElementById('firmType').value = 'Regional';
+      document.getElementById('firmLocation').value = '';
+      document.getElementById('firmSize').value = '';
+      document.getElementById('firmDescription').value = '';
+      document.getElementById('firmSpecialties').value = '';
+      document.getElementById('firmWebsite').value = '';
+      document.getElementById('firmHiring').value = 'false';
+      firmForm.classList.add('visible');
+      document.getElementById('firmName').focus();
+    });
+
+    cancelFirmBtn.addEventListener('click', () => {
+      firmForm.classList.remove('visible');
+    });
+
+    saveFirmBtn.addEventListener('click', async () => {
+      const name = document.getElementById('firmName').value.trim();
+      const type = document.getElementById('firmType').value;
+      const location = document.getElementById('firmLocation').value.trim();
+      const size = document.getElementById('firmSize').value.trim();
+      const description = document.getElementById('firmDescription').value.trim();
+      const specialties = document.getElementById('firmSpecialties').value.trim();
+      const website = document.getElementById('firmWebsite').value.trim();
+      const hiring = document.getElementById('firmHiring').value === 'true';
+      const editId = document.getElementById('firmEditId').value;
+
+      if (!name) {
+        showToast('Please enter a firm name.');
+        return;
+      }
+
+      const firmData = { name, type, location, size, description, specialties, website, hiring };
+
+      try {
+        if (editId) {
+          await fetch(FIREBASE_DB_URL + '/firms/' + editId + '.json', {
+            method: 'PUT',
+            body: JSON.stringify(firmData)
+          });
+          showToast('Firm updated!');
+        } else {
+          await fetch(FIREBASE_DB_URL + '/firms.json', {
+            method: 'POST',
+            body: JSON.stringify(firmData)
+          });
+          showToast('Firm added!');
+        }
+        firmForm.classList.remove('visible');
+        loadFirms();
+      } catch (err) {
+        showToast('Error saving firm. Please try again.');
+      }
+    });
+
+    async function loadFirms() {
+      const listEl = document.getElementById('firmList');
+      const countEl = document.getElementById('firmCount');
+
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/firms.json');
+        const data = await res.json();
+
+        if (!data) {
+          listEl.innerHTML = '<div class="empty-state">No firms yet. Click "+ Add Firm" to create one.</div>';
+          countEl.textContent = '';
+          return;
+        }
+
+        const firms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        firms.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        countEl.textContent = '(' + firms.length + ')';
+
+        listEl.innerHTML = firms.map(firm => {
+          const hiringBadge = firm.hiring ? ' <span class="event-list-tag" style="background:rgba(45,122,58,0.1);color:#2D7A3A;">hiring</span>' : '';
+          return `<div class="event-list-item">
+            <div class="event-list-info">
+              <h4>${escapeHtml(firm.name)}${hiringBadge}</h4>
+              <span class="event-list-meta">${escapeHtml(firm.type || '')}${firm.location ? ' &middot; ' + escapeHtml(firm.location) : ''}</span>
+            </div>
+            <div class="event-list-actions">
+              <button class="btn btn-edit" onclick="editFirm('${firm.id}')">Edit</button>
+              <button class="btn btn-delete" onclick="deleteFirm('${firm.id}', '${escapeHtml(firm.name)}')">Delete</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch (err) {
+        listEl.innerHTML = '<div class="empty-state">Error loading firms. Please refresh.</div>';
+      }
+    }
+
+    async function editFirm(id) {
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/firms/' + id + '.json');
+        const firm = await res.json();
+        if (!firm) return;
+
+        document.getElementById('firmEditId').value = id;
+        document.getElementById('firmFormTitle').textContent = 'Edit Firm';
+        document.getElementById('firmName').value = firm.name || '';
+        document.getElementById('firmType').value = firm.type || 'Regional';
+        document.getElementById('firmLocation').value = firm.location || '';
+        document.getElementById('firmSize').value = firm.size || '';
+        document.getElementById('firmDescription').value = firm.description || '';
+        document.getElementById('firmSpecialties').value = firm.specialties || '';
+        document.getElementById('firmWebsite').value = firm.website || '';
+        document.getElementById('firmHiring').value = firm.hiring ? 'true' : 'false';
+        firmForm.classList.add('visible');
+        document.getElementById('firmName').focus();
+      } catch (err) {
+        showToast('Error loading firm.');
+      }
+    }
+
+    async function deleteFirm(id, name) {
+      if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+      try {
+        await fetch(FIREBASE_DB_URL + '/firms/' + id + '.json', { method: 'DELETE' });
+        showToast('Firm deleted.');
+        loadFirms();
+      } catch (err) {
+        showToast('Error deleting firm.');
       }
     }
   </script>
