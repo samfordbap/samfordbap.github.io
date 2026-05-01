@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAP Admin — Manage Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --crimson: #8B1A1A;
+      --crimson-dark: #6B1414;
+      --navy: #1B2A4A;
+      --gold: #C4A35A;
+      --cream: #FAF7F2;
+      --text-primary: #1A1A1A;
+      --text-secondary: #4A4A4A;
+      --text-light: #6B6B6B;
+      --white: #FFFFFF;
+      --green: #2D7A3A;
+      --red: #C0392B;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Login Screen ── */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .login-box {
+      background: var(--white);
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-box h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-box p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 0.95rem;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-family: var(--sans);
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+
+    .login-error {
+      color: var(--red);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: var(--sans);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--crimson);
+      color: var(--white);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-primary:hover { background: var(--crimson-dark); }
+
+    .btn-add {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .btn-add:hover { background: #243558; }
+
+    .btn-save {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .btn-save:hover { background: #24632E; }
+
+    .btn-cancel {
+      background: #E8E8E8;
+      color: var(--text-primary);
+    }
+
+    .btn-cancel:hover { background: #D8D8D8; }
+
+    .btn-delete {
+      background: none;
+      color: var(--red);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-delete:hover { background: rgba(192,57,43,0.08); }
+
+    .btn-edit {
+      background: none;
+      color: var(--navy);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-edit:hover { background: rgba(27,42,74,0.06); }
+
+    .btn-logout {
+      background: none;
+      color: var(--text-light);
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-logout:hover { color: var(--red); }
+
+    /* ── Admin Panel ── */
+    .admin-panel { display: none; }
+
+    .admin-header {
+      background: var(--white);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .admin-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .admin-body {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .admin-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-toolbar h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .event-count {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    /* ── Event Form ── */
+    .event-form {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .event-form.visible { display: block; }
+
+    .event-form h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.7rem 0.85rem;
+      font-size: 0.9rem;
+      font-family: var(--sans);
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      background: var(--white);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    /* ── Event List ── */
+    .event-list-item {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .event-list-item:hover {
+      border-color: rgba(0,0,0,0.12);
+    }
+
+    .event-list-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .event-list-info h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .event-list-meta {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .event-list-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .event-list-tag.professional { background: rgba(139,26,26,0.08); color: var(--crimson); }
+    .event-list-tag.technical { background: rgba(27,42,74,0.08); color: var(--navy); }
+    .event-list-tag.service { background: rgba(196,163,90,0.12); color: #8B7332; }
+    .event-list-tag.social { background: rgba(100,140,100,0.1); color: #3D6B3D; }
+
+    .event-list-actions {
+      display: flex;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--navy);
+      color: var(--white);
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .view-site-link {
+      font-size: 0.85rem;
+      color: var(--crimson);
+      text-decoration: none;
+    }
+
+    .view-site-link:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .admin-header { padding: 1rem; }
+      .admin-body { padding: 0 1rem; }
+      .event-list-item { flex-direction: column; align-items: flex-start; }
+      .event-list-actions { align-self: flex-end; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h1>BAP Admin</h1>
+      <p>Enter the admin password to manage events.</p>
+      <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
+      <input type="password" id="passwordInput" placeholder="Password" autofocus>
+      <button class="btn btn-primary" id="loginBtn">Sign In</button>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+      <h1>BAP Event Manager</h1>
+      <div class="admin-header-right">
+        <a href="index.html" class="view-site-link">View Site</a>
+        <button class="btn btn-logout" id="logoutBtn">Log Out</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+      <div class="admin-toolbar">
+        <h2>Events <span class="event-count" id="eventCount"></span></h2>
+        <button class="btn btn-add" id="addEventBtn">+ Add Event</button>
+      </div>
+
+      <!-- Add/Edit Form -->
+      <div class="event-form" id="eventForm">
+        <h3 id="formTitle">Add New Event</h3>
+        <input type="hidden" id="editId">
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Event Title</label>
+            <input type="text" id="eventTitle" placeholder="e.g. Meet the Firms Panel">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="eventDate">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="eventCategory">
+              <option value="professional">Professional</option>
+              <option value="technical">Technical</option>
+              <option value="service">Service</option>
+              <option value="social">Social</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Location</label>
+            <input type="text" id="eventLocation" placeholder="e.g. Brock School of Business, Room 230">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Description (optional)</label>
+            <textarea id="eventDescription" placeholder="Brief description of the event"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-save" id="saveEventBtn">Save Event</button>
+          <button class="btn btn-cancel" id="cancelEventBtn">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Event List -->
+      <div id="eventList"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const FIREBASE_DB_URL = 'https://samford-bap-default-rtdb.firebaseio.com';
+    const ADMIN_PASSWORD_HASH = 'a31ab36ade5c3f1b6d5362fd065848d1ad62f1e4f02e3dce52dc3bc4bbf40393';
+
+    async function hashPassword(password) {
+      const encoded = new TextEncoder().encode(password);
+      const buffer = await crypto.subtle.digest('SHA-256', encoded);
+      return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Toast notifications
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Login
+    const loginScreen = document.getElementById('loginScreen');
+    const adminPanel = document.getElementById('adminPanel');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const passwordInput = document.getElementById('passwordInput');
+
+    if (sessionStorage.getItem('bap_admin') === 'true') {
+      loginScreen.style.display = 'none';
+      adminPanel.style.display = 'block';
+      loadEvents();
+    }
+
+    async function attemptLogin() {
+      const hash = await hashPassword(passwordInput.value);
+      if (hash === ADMIN_PASSWORD_HASH) {
+        sessionStorage.setItem('bap_admin', 'true');
+        loginScreen.style.display = 'none';
+        adminPanel.style.display = 'block';
+        loadEvents();
+      } else {
+        loginError.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    }
+
+    loginBtn.addEventListener('click', attemptLogin);
+    passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('bap_admin');
+      loginScreen.style.display = 'flex';
+      adminPanel.style.display = 'none';
+      passwordInput.value = '';
+    });
+
+    // Event Form
+    const eventForm = document.getElementById('eventForm');
+    const addEventBtn = document.getElementById('addEventBtn');
+    const cancelEventBtn = document.getElementById('cancelEventBtn');
+    const saveEventBtn = document.getElementById('saveEventBtn');
+
+    addEventBtn.addEventListener('click', () => {
+      document.getElementById('editId').value = '';
+      document.getElementById('formTitle').textContent = 'Add New Event';
+      document.getElementById('eventTitle').value = '';
+      document.getElementById('eventDate').value = '';
+      document.getElementById('eventCategory').value = 'professional';
+      document.getElementById('eventLocation').value = '';
+      document.getElementById('eventDescription').value = '';
+      eventForm.classList.add('visible');
+      document.getElementById('eventTitle').focus();
+    });
+
+    cancelEventBtn.addEventListener('click', () => {
+      eventForm.classList.remove('visible');
+    });
+
+    saveEventBtn.addEventListener('click', async () => {
+      const title = document.getElementById('eventTitle').value.trim();
+      const date = document.getElementById('eventDate').value;
+      const category = document.getElementById('eventCategory').value;
+      const location = document.getElementById('eventLocation').value.trim();
+      const description = document.getElementById('eventDescription').value.trim();
+      const editId = document.getElementById('editId').value;
+
+      if (!title || !date) {
+        showToast('Please fill in the title and date.');
+        return;
+      }
+
+      const eventData = { title, date, category, location, description };
+
+      try {
+        if (editId) {
+          await fetch(FIREBASE_DB_URL + '/events/' + editId + '.json', {
+            method: 'PUT',
+            body: JSON.stringify(eventData)
+          });
+          showToast('Event updated!');
+        } else {
+          await fetch(FIREBASE_DB_URL + '/events.json', {
+            method: 'POST',
+            body: JSON.stringify(eventData)
+          });
+          showToast('Event added!');
+        }
+        eventForm.classList.remove('visible');
+        loadEvents();
+      } catch (err) {
+        showToast('Error saving event. Please try again.');
+      }
+    });
+
+    // Load & render events
+    async function loadEvents() {
+      const listEl = document.getElementById('eventList');
+      const countEl = document.getElementById('eventCount');
+
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/events.json');
+        const data = await res.json();
+
+        if (!data) {
+          listEl.innerHTML = '<div class="empty-state">No events yet. Click "+ Add Event" to create one.</div>';
+          countEl.textContent = '';
+          return;
+        }
+
+        const events = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        countEl.textContent = '(' + events.length + ')';
+
+        listEl.innerHTML = events.map(ev => {
+          const d = new Date(ev.date + 'T00:00:00');
+          const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          const cat = (ev.category || 'social').toLowerCase();
+          return `<div class="event-list-item">
+            <div class="event-list-info">
+              <h4>${escapeHtml(ev.title)}</h4>
+              <span class="event-list-meta">${dateStr}${ev.location ? ' &middot; ' + escapeHtml(ev.location) : ''}</span>
+            </div>
+            <span class="event-list-tag ${cat}">${cat}</span>
+            <div class="event-list-actions">
+              <button class="btn btn-edit" onclick="editEvent('${ev.id}')">Edit</button>
+              <button class="btn btn-delete" onclick="deleteEvent('${ev.id}', '${escapeHtml(ev.title)}')">Delete</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch (err) {
+        listEl.innerHTML = '<div class="empty-state">Error loading events. Please refresh.</div>';
+      }
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function editEvent(id) {
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/events/' + id + '.json');
+        const ev = await res.json();
+        if (!ev) return;
+
+        document.getElementById('editId').value = id;
+        document.getElementById('formTitle').textContent = 'Edit Event';
+        document.getElementById('eventTitle').value = ev.title || '';
+        document.getElementById('eventDate').value = ev.date || '';
+        document.getElementById('eventCategory').value = ev.category || 'professional';
+        document.getElementById('eventLocation').value = ev.location || '';
+        document.getElementById('eventDescription').value = ev.description || '';
+        eventForm.classList.add('visible');
+        document.getElementById('eventTitle').focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        showToast('Error loading event.');
+      }
+    }
+
+    async function deleteEvent(id, title) {
+      if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
+      try {
+        await fetch(FIREBASE_DB_URL + '/events/' + id + '.json', { method: 'DELETE' });
+        showToast('Event deleted.');
+        loadEvents();
+      } catch (err) {
+        showToast('Error deleting event.');
+      }
+    }
+  </script>
+
+</body>
+</html>
