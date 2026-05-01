@@ -374,7 +374,83 @@
 
     .view-site-link:hover { text-decoration: underline; }
 
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    .checkbox-grid label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-grid input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
+
+    .size-slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .size-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .size-slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--navy);
+      height: 6px;
+    }
+
+    .size-slider-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--navy);
+      min-width: 100px;
+      text-align: right;
+    }
+
+    .size-presets {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+    }
+
+    .size-preset {
+      font-size: 0.725rem;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--text-light);
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: all 0.15s;
+    }
+
+    .size-preset:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
     @media (max-width: 600px) {
+      .checkbox-grid { grid-template-columns: repeat(2, 1fr); }
       .form-row { grid-template-columns: 1fr; }
       .admin-header { padding: 1rem; }
       .admin-body { padding: 0 1rem; }
@@ -486,13 +562,31 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group full">
               <label>Location</label>
               <input type="text" id="firmLocation" placeholder="e.g. Birmingham, AL">
             </div>
-            <div class="form-group">
-              <label>Size / Employees</label>
-              <input type="text" id="firmSize" placeholder="e.g. 50-200 employees">
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Firm Size (employees)</label>
+              <div class="size-slider-wrapper">
+                <div class="size-slider-row">
+                  <input type="range" id="firmSize" min="1" max="500000" value="100" step="1">
+                  <span class="size-slider-value" id="firmSizeDisplay">100 employees</span>
+                </div>
+                <div class="size-presets">
+                  <button type="button" class="size-preset" onclick="setFirmSize(10)">10</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(50)">50</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(100)">100</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(500)">500</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(2500)">2,500</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(10000)">10k</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(50000)">50k</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(100000)">100k</button>
+                  <button type="button" class="size-preset" onclick="setFirmSize(300000)">300k+</button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="form-row">
@@ -502,11 +596,23 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group full">
               <label>Specialties</label>
-              <input type="text" id="firmSpecialties" placeholder="e.g. Audit, Tax, Advisory">
+              <div class="checkbox-grid" id="specialtiesGrid">
+                <label><input type="checkbox" value="Audit"> Audit</label>
+                <label><input type="checkbox" value="Tax"> Tax</label>
+                <label><input type="checkbox" value="Advisory"> Advisory</label>
+                <label><input type="checkbox" value="Consulting"> Consulting</label>
+                <label><input type="checkbox" value="Forensic Accounting"> Forensic Accounting</label>
+                <label><input type="checkbox" value="Governmental"> Governmental</label>
+                <label><input type="checkbox" value="Technology"> Technology</label>
+                <label><input type="checkbox" value="Wealth Management"> Wealth Management</label>
+                <label><input type="checkbox" value="Bookkeeping"> Bookkeeping</label>
+              </div>
             </div>
-            <div class="form-group">
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
               <label>Website URL</label>
               <input type="url" id="firmWebsite" placeholder="e.g. https://www.pwc.com">
             </div>
@@ -732,15 +838,44 @@
     const cancelFirmBtn = document.getElementById('cancelFirmBtn');
     const saveFirmBtn = document.getElementById('saveFirmBtn');
 
+    // Size slider
+    const firmSizeSlider = document.getElementById('firmSize');
+    const firmSizeDisplay = document.getElementById('firmSizeDisplay');
+
+    function formatSizeDisplay(val) {
+      val = parseInt(val);
+      if (val >= 1000) return Math.round(val / 1000).toLocaleString() + 'k employees';
+      return val.toLocaleString() + ' employees';
+    }
+
+    firmSizeSlider.addEventListener('input', () => {
+      firmSizeDisplay.textContent = formatSizeDisplay(firmSizeSlider.value);
+    });
+
+    function setFirmSize(val) {
+      firmSizeSlider.value = val;
+      firmSizeDisplay.textContent = formatSizeDisplay(val);
+    }
+
+    function getSelectedSpecialties() {
+      return Array.from(document.querySelectorAll('#specialtiesGrid input:checked')).map(cb => cb.value);
+    }
+
+    function setSelectedSpecialties(specs) {
+      document.querySelectorAll('#specialtiesGrid input').forEach(cb => {
+        cb.checked = Array.isArray(specs) && specs.includes(cb.value);
+      });
+    }
+
     addFirmBtn.addEventListener('click', () => {
       document.getElementById('firmEditId').value = '';
       document.getElementById('firmFormTitle').textContent = 'Add New Firm';
       document.getElementById('firmName').value = '';
       document.getElementById('firmType').value = 'Regional';
       document.getElementById('firmLocation').value = '';
-      document.getElementById('firmSize').value = '';
+      setFirmSize(100);
       document.getElementById('firmDescription').value = '';
-      document.getElementById('firmSpecialties').value = '';
+      setSelectedSpecialties([]);
       document.getElementById('firmWebsite').value = '';
       document.getElementById('firmHiring').value = 'false';
       firmForm.classList.add('visible');
@@ -755,9 +890,9 @@
       const name = document.getElementById('firmName').value.trim();
       const type = document.getElementById('firmType').value;
       const location = document.getElementById('firmLocation').value.trim();
-      const size = document.getElementById('firmSize').value.trim();
+      const size = parseInt(document.getElementById('firmSize').value) || 0;
       const description = document.getElementById('firmDescription').value.trim();
-      const specialties = document.getElementById('firmSpecialties').value.trim();
+      const specialties = getSelectedSpecialties();
       const website = document.getElementById('firmWebsite').value.trim();
       const hiring = document.getElementById('firmHiring').value === 'true';
       const editId = document.getElementById('firmEditId').value;
@@ -810,10 +945,14 @@
 
         listEl.innerHTML = firms.map(firm => {
           const hiringBadge = firm.hiring ? ' <span class="event-list-tag" style="background:rgba(45,122,58,0.1);color:#2D7A3A;">hiring</span>' : '';
+          const sizeStr = firm.size ? (firm.size >= 1000 ? Math.round(firm.size/1000) + 'k' : firm.size) + ' emp.' : '';
+          const specs = Array.isArray(firm.specialties) ? firm.specialties.join(', ') : '';
+          const meta = [firm.type, firm.location, sizeStr].filter(Boolean).join(' &middot; ');
           return `<div class="event-list-item">
             <div class="event-list-info">
               <h4>${escapeHtml(firm.name)}${hiringBadge}</h4>
-              <span class="event-list-meta">${escapeHtml(firm.type || '')}${firm.location ? ' &middot; ' + escapeHtml(firm.location) : ''}</span>
+              <span class="event-list-meta">${meta}</span>
+              ${specs ? '<br><span class="event-list-meta" style="font-size:0.75rem;">' + escapeHtml(specs) + '</span>' : ''}
             </div>
             <div class="event-list-actions">
               <button class="btn btn-edit" onclick="editFirm('${firm.id}')">Edit</button>
@@ -837,9 +976,9 @@
         document.getElementById('firmName').value = firm.name || '';
         document.getElementById('firmType').value = firm.type || 'Regional';
         document.getElementById('firmLocation').value = firm.location || '';
-        document.getElementById('firmSize').value = firm.size || '';
+        setFirmSize(firm.size || 100);
         document.getElementById('firmDescription').value = firm.description || '';
-        document.getElementById('firmSpecialties').value = firm.specialties || '';
+        setSelectedSpecialties(firm.specialties || []);
         document.getElementById('firmWebsite').value = firm.website || '';
         document.getElementById('firmHiring').value = firm.hiring ? 'true' : 'false';
         firmForm.classList.add('visible');

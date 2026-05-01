@@ -524,6 +524,82 @@
 
     .firm-link:hover { text-decoration: underline; }
 
+    .firm-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: flex-end;
+    }
+
+    .firm-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .firm-filter-group label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+    }
+
+    .firm-filter-group select {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.825rem;
+      font-family: var(--sans);
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--text-primary);
+      cursor: pointer;
+      min-width: 150px;
+    }
+
+    .firm-filter-group select:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+
+    .firm-sort-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.825rem;
+      font-weight: 500;
+      font-family: var(--sans);
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .firm-sort-btn:hover,
+    .firm-sort-btn.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .firm-specialty-tag {
+      font-size: 0.725rem;
+      color: var(--text-light);
+      background: var(--cream);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .firm-size-label {
+      font-size: 0.775rem;
+      color: var(--text-light);
+      background: var(--cream);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+    }
+
     /* ── Service ── */
     .service-section {
       background: var(--cream);
@@ -1014,6 +1090,52 @@
       <p class="section-label fade-in">Local Opportunities</p>
       <h2 class="section-title fade-in">Accounting Firms</h2>
       <p class="section-intro fade-in">Local and regional firms that recruit from Samford. Check back for updated hiring info and opportunities.</p>
+
+      <div class="firm-filters fade-in" id="firmFilters">
+        <div class="firm-filter-group">
+          <label>Type</label>
+          <select id="firmFilterType">
+            <option value="all">All Types</option>
+            <option value="Big 4">Big 4</option>
+            <option value="National">National</option>
+            <option value="Regional">Regional</option>
+            <option value="Local">Local</option>
+            <option value="Industry">Industry</option>
+            <option value="Government">Government</option>
+          </select>
+        </div>
+        <div class="firm-filter-group">
+          <label>Specialty</label>
+          <select id="firmFilterSpecialty">
+            <option value="all">All Specialties</option>
+            <option value="Audit">Audit</option>
+            <option value="Tax">Tax</option>
+            <option value="Advisory">Advisory</option>
+            <option value="Consulting">Consulting</option>
+            <option value="Forensic Accounting">Forensic Accounting</option>
+            <option value="Governmental">Governmental</option>
+            <option value="Technology">Technology</option>
+            <option value="Wealth Management">Wealth Management</option>
+          </select>
+        </div>
+        <div class="firm-filter-group">
+          <label>Hiring</label>
+          <select id="firmFilterHiring">
+            <option value="all">All</option>
+            <option value="yes">Hiring Now</option>
+          </select>
+        </div>
+        <div class="firm-filter-group">
+          <label>Sort By</label>
+          <select id="firmSort">
+            <option value="name">Name (A–Z)</option>
+            <option value="size-desc">Size (Largest)</option>
+            <option value="size-asc">Size (Smallest)</option>
+            <option value="type">Type</option>
+          </select>
+        </div>
+      </div>
+
       <div class="firms-grid" id="firmsGrid">
         <p style="color: var(--text-light); font-size: 0.95rem;">Loading firms...</p>
       </div>
@@ -1168,40 +1290,83 @@
     });
 
     // Load firms from Firebase
-    function renderFirms(firms) {
+    let allFirms = [];
+
+    function formatFirmSize(size) {
+      if (!size && size !== 0) return '';
+      if (size >= 1000) return Math.round(size / 1000) + 'k+ employees';
+      return size + '+ employees';
+    }
+
+    function renderFirmCards(firms) {
       const grid = document.getElementById('firmsGrid');
       if (!firms || firms.length === 0) {
-        grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">Firm listings coming soon — check back later!</p>';
+        grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem; grid-column: 1/-1;">No firms match your filters. Try broadening your search.</p>';
         return;
       }
-      firms.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
       grid.innerHTML = firms.map(firm => {
         const hiringBadge = firm.hiring ? '<span class="firm-hiring">Hiring</span>' : '';
         const website = firm.website ? '<a href="' + firm.website + '" target="_blank" rel="noopener" class="firm-link">Visit Website &rarr;</a>' : '';
-        const details = [];
-        if (firm.location) details.push(firm.location);
-        if (firm.size) details.push(firm.size);
-        if (firm.specialties) details.push(firm.specialties);
-        const detailsHtml = details.length ? '<div class="firm-details">' + details.map(d => '<span class="firm-detail">' + d + '</span>').join('') + '</div>' : '';
+        const specs = Array.isArray(firm.specialties) ? firm.specialties : (firm.specialties ? [firm.specialties] : []);
+        const specHtml = specs.length ? '<div class="firm-details">' + specs.map(s => '<span class="firm-specialty-tag">' + s + '</span>').join('') + '</div>' : '';
+        const detailParts = [];
+        if (firm.location) detailParts.push('<span class="firm-detail">' + firm.location + '</span>');
+        if (firm.size) detailParts.push('<span class="firm-size-label">' + formatFirmSize(firm.size) + '</span>');
+        const detailsHtml = detailParts.length ? '<div class="firm-details">' + detailParts.join('') + '</div>' : '';
         return '<div class="firm-card fade-in">' +
           '<div class="firm-header"><h3>' + (firm.name || '') + '</h3>' + hiringBadge + '</div>' +
           (firm.type ? '<div class="firm-type">' + firm.type + '</div>' : '') +
           (firm.description ? '<p>' + firm.description + '</p>' : '') +
           detailsHtml +
+          specHtml +
           website +
         '</div>';
       }).join('');
       grid.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
+    function applyFirmFilters() {
+      const typeFilter = document.getElementById('firmFilterType').value;
+      const specFilter = document.getElementById('firmFilterSpecialty').value;
+      const hiringFilter = document.getElementById('firmFilterHiring').value;
+      const sortBy = document.getElementById('firmSort').value;
+
+      let filtered = allFirms.filter(firm => {
+        if (typeFilter !== 'all' && firm.type !== typeFilter) return false;
+        if (hiringFilter === 'yes' && !firm.hiring) return false;
+        if (specFilter !== 'all') {
+          const specs = Array.isArray(firm.specialties) ? firm.specialties : [];
+          if (!specs.includes(specFilter)) return false;
+        }
+        return true;
+      });
+
+      filtered.sort((a, b) => {
+        if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '');
+        if (sortBy === 'size-desc') return (b.size || 0) - (a.size || 0);
+        if (sortBy === 'size-asc') return (a.size || 0) - (b.size || 0);
+        if (sortBy === 'type') {
+          const order = ['Big 4','National','Regional','Local','Industry','Government'];
+          return order.indexOf(a.type) - order.indexOf(b.type);
+        }
+        return 0;
+      });
+
+      renderFirmCards(filtered);
+    }
+
+    ['firmFilterType','firmFilterSpecialty','firmFilterHiring','firmSort'].forEach(id => {
+      document.getElementById(id).addEventListener('change', applyFirmFilters);
+    });
+
     fetch(FIREBASE_DB_URL + '/firms.json')
       .then(r => r.json())
       .then(data => {
-        if (!data) { renderFirms([]); return; }
-        const firms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-        renderFirms(firms);
+        if (!data) { renderFirmCards([]); return; }
+        allFirms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        applyFirmFilters();
       })
-      .catch(() => renderFirms([]));
+      .catch(() => renderFirmCards([]));
 
     // Fetch events
     fetch(FIREBASE_DB_URL + '/events.json')
