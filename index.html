@@ -524,6 +524,122 @@
 
     .firm-link:hover { text-decoration: underline; }
 
+    /* ── Opportunities ── */
+    .opportunities {
+      background: var(--white);
+    }
+
+    .opportunity-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .opportunity-filter {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.825rem;
+      font-weight: 500;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 100px;
+      background: var(--white);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .opportunity-filter:hover,
+    .opportunity-filter.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .opportunities-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .opportunity-card {
+      background: var(--cream);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .opportunity-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      transform: translateY(-1px);
+    }
+
+    .opportunity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .opportunity-card h3 {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--navy);
+    }
+
+    .opportunity-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .opportunity-tag.scholarship { background: rgba(196,163,90,0.15); color: #8B7332; }
+    .opportunity-tag.research { background: rgba(27,42,74,0.08); color: var(--navy); }
+    .opportunity-tag.conference { background: rgba(139,26,26,0.08); color: var(--crimson); }
+    .opportunity-tag.internship { background: rgba(100,140,100,0.1); color: #3D6B3D; }
+
+    .opportunity-meta {
+      font-size: 0.825rem;
+      color: var(--text-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .opportunity-card p {
+      font-size: 0.925rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+
+    .opportunity-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .opportunity-deadline {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--crimson);
+    }
+
+    .opportunity-link {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--crimson);
+      text-decoration: none;
+    }
+
+    .opportunity-link:hover { text-decoration: underline; }
+
     .firm-filters {
       display: flex;
       flex-wrap: wrap;
@@ -917,6 +1033,7 @@
         <li><a href="#resources">Resources</a></li>
         <li><a href="#service">Service</a></li>
         <li><a href="#firms">Firms</a></li>
+        <li><a href="#opportunities">Opportunities</a></li>
         <li><a href="#join">Join</a></li>
       </ul>
     </div>
@@ -1138,6 +1255,27 @@
 
       <div class="firms-grid" id="firmsGrid">
         <p style="color: var(--text-light); font-size: 0.95rem;">Loading firms...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Opportunities -->
+  <section class="opportunities" id="opportunities">
+    <div class="container">
+      <p class="section-label fade-in">Beyond the Classroom</p>
+      <h2 class="section-title fade-in">Scholarships & Opportunities</h2>
+      <p class="section-intro fade-in">Scholarships, research positions, and conferences open to BAP members. Check back often — new opportunities are added throughout the year.</p>
+
+      <div class="opportunity-filters fade-in">
+        <button class="opportunity-filter active" data-filter="all">All</button>
+        <button class="opportunity-filter" data-filter="scholarship">Scholarships</button>
+        <button class="opportunity-filter" data-filter="research">Research</button>
+        <button class="opportunity-filter" data-filter="conference">Conferences</button>
+        <button class="opportunity-filter" data-filter="internship">Internships</button>
+      </div>
+
+      <div class="opportunities-grid" id="opportunitiesGrid">
+        <p style="color: var(--text-light); font-size: 0.95rem;">Loading opportunities...</p>
       </div>
     </div>
   </section>
@@ -1367,6 +1505,75 @@
         applyFirmFilters();
       })
       .catch(() => renderFirmCards([]));
+
+    // ── Opportunities ──
+    let allOpportunities = [];
+    let activeOppFilter = 'all';
+
+    function renderOpportunities() {
+      const grid = document.getElementById('opportunitiesGrid');
+      const filtered = activeOppFilter === 'all'
+        ? allOpportunities
+        : allOpportunities.filter(o => (o.type || '').toLowerCase() === activeOppFilter);
+
+      if (!filtered || filtered.length === 0) {
+        grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">No opportunities in this category right now — check back soon!</p>';
+        return;
+      }
+
+      // Sort: items with deadlines first (soonest first), then no-deadline items
+      filtered.sort((a, b) => {
+        if (a.deadline && b.deadline) return new Date(a.deadline) - new Date(b.deadline);
+        if (a.deadline) return -1;
+        if (b.deadline) return 1;
+        return (a.title || '').localeCompare(b.title || '');
+      });
+
+      grid.innerHTML = filtered.map(opp => {
+        const type = (opp.type || 'scholarship').toLowerCase();
+        const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+        let deadlineHtml = '';
+        if (opp.deadline) {
+          const d = new Date(opp.deadline + 'T00:00:00');
+          const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+          deadlineHtml = '<span class="opportunity-deadline">Deadline: ' + dateStr + '</span>';
+        }
+        const linkHtml = opp.link ? '<a href="' + opp.link + '" target="_blank" rel="noopener" class="opportunity-link">Learn more &rarr;</a>' : '';
+        const metaParts = [];
+        if (opp.organization) metaParts.push(opp.organization);
+        if (opp.amount) metaParts.push(opp.amount);
+        const metaHtml = metaParts.length ? '<div class="opportunity-meta">' + metaParts.join(' &middot; ') + '</div>' : '';
+
+        return '<div class="opportunity-card fade-in">' +
+          '<div class="opportunity-header">' +
+            '<h3>' + (opp.title || '') + '</h3>' +
+            '<span class="opportunity-tag ' + type + '">' + typeLabel + '</span>' +
+          '</div>' +
+          metaHtml +
+          (opp.description ? '<p>' + opp.description + '</p>' : '') +
+          '<div class="opportunity-footer">' + deadlineHtml + linkHtml + '</div>' +
+        '</div>';
+      }).join('');
+      grid.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }
+
+    document.querySelectorAll('.opportunity-filter').forEach(filter => {
+      filter.addEventListener('click', () => {
+        document.querySelectorAll('.opportunity-filter').forEach(f => f.classList.remove('active'));
+        filter.classList.add('active');
+        activeOppFilter = filter.dataset.filter;
+        renderOpportunities();
+      });
+    });
+
+    fetch(FIREBASE_DB_URL + '/opportunities.json')
+      .then(r => r.json())
+      .then(data => {
+        if (!data) { allOpportunities = []; renderOpportunities(); return; }
+        allOpportunities = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        renderOpportunities();
+      })
+      .catch(() => { allOpportunities = []; renderOpportunities(); });
 
     // Fetch events
     fetch(FIREBASE_DB_URL + '/events.json')

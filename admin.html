@@ -534,6 +534,68 @@
       <!-- Event List -->
       <div id="eventList"></div>
 
+      <!-- Opportunities Section -->
+      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(0,0,0,0.06);">
+        <div class="admin-toolbar">
+          <h2>Opportunities <span class="event-count" id="oppCount"></span></h2>
+          <button class="btn btn-add" id="addOppBtn">+ Add Opportunity</button>
+        </div>
+
+        <div class="event-form" id="oppForm">
+          <h3 id="oppFormTitle">Add New Opportunity</h3>
+          <input type="hidden" id="oppEditId">
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Title</label>
+              <input type="text" id="oppTitle" placeholder="e.g. PwC Diversity Scholarship">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Type</label>
+              <select id="oppType">
+                <option value="scholarship">Scholarship</option>
+                <option value="research">Research</option>
+                <option value="conference">Conference</option>
+                <option value="internship">Internship</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Deadline (optional)</label>
+              <input type="date" id="oppDeadline">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Organization (optional)</label>
+              <input type="text" id="oppOrganization" placeholder="e.g. AICPA, PwC">
+            </div>
+            <div class="form-group">
+              <label>Amount / Value (optional)</label>
+              <input type="text" id="oppAmount" placeholder="e.g. $5,000 or Travel covered">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Description</label>
+              <textarea id="oppDescription" placeholder="Brief description of the opportunity and any eligibility requirements"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Link / Application URL (optional)</label>
+              <input type="url" id="oppLink" placeholder="e.g. https://www.aicpa.org/scholarships">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-save" id="saveOppBtn">Save Opportunity</button>
+            <button class="btn btn-cancel" id="cancelOppBtn">Cancel</button>
+          </div>
+        </div>
+
+        <div id="oppList"></div>
+      </div>
+
       <!-- Firms Section -->
       <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(0,0,0,0.06);">
         <div class="admin-toolbar">
@@ -669,6 +731,7 @@
       adminPanel.style.display = 'block';
       loadEvents();
       loadFirms();
+      loadOpportunities();
     }
 
     async function attemptLogin() {
@@ -996,6 +1059,149 @@
         loadFirms();
       } catch (err) {
         showToast('Error deleting firm.');
+      }
+    }
+
+    // ── Opportunities Management ──
+    const oppForm = document.getElementById('oppForm');
+    const addOppBtn = document.getElementById('addOppBtn');
+    const cancelOppBtn = document.getElementById('cancelOppBtn');
+    const saveOppBtn = document.getElementById('saveOppBtn');
+
+    addOppBtn.addEventListener('click', () => {
+      document.getElementById('oppEditId').value = '';
+      document.getElementById('oppFormTitle').textContent = 'Add New Opportunity';
+      document.getElementById('oppTitle').value = '';
+      document.getElementById('oppType').value = 'scholarship';
+      document.getElementById('oppDeadline').value = '';
+      document.getElementById('oppOrganization').value = '';
+      document.getElementById('oppAmount').value = '';
+      document.getElementById('oppDescription').value = '';
+      document.getElementById('oppLink').value = '';
+      oppForm.classList.add('visible');
+      document.getElementById('oppTitle').focus();
+    });
+
+    cancelOppBtn.addEventListener('click', () => {
+      oppForm.classList.remove('visible');
+    });
+
+    saveOppBtn.addEventListener('click', async () => {
+      const title = document.getElementById('oppTitle').value.trim();
+      const type = document.getElementById('oppType').value;
+      const deadline = document.getElementById('oppDeadline').value;
+      const organization = document.getElementById('oppOrganization').value.trim();
+      const amount = document.getElementById('oppAmount').value.trim();
+      const description = document.getElementById('oppDescription').value.trim();
+      const link = document.getElementById('oppLink').value.trim();
+      const editId = document.getElementById('oppEditId').value;
+
+      if (!title) {
+        showToast('Please enter a title.');
+        return;
+      }
+
+      const oppData = { title, type, deadline, organization, amount, description, link };
+
+      try {
+        if (editId) {
+          await fetch(FIREBASE_DB_URL + '/opportunities/' + editId + '.json', {
+            method: 'PUT',
+            body: JSON.stringify(oppData)
+          });
+          showToast('Opportunity updated!');
+        } else {
+          await fetch(FIREBASE_DB_URL + '/opportunities.json', {
+            method: 'POST',
+            body: JSON.stringify(oppData)
+          });
+          showToast('Opportunity added!');
+        }
+        oppForm.classList.remove('visible');
+        loadOpportunities();
+      } catch (err) {
+        showToast('Error saving opportunity. Please try again.');
+      }
+    });
+
+    async function loadOpportunities() {
+      const listEl = document.getElementById('oppList');
+      const countEl = document.getElementById('oppCount');
+
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/opportunities.json');
+        const data = await res.json();
+
+        if (!data) {
+          listEl.innerHTML = '<div class="empty-state">No opportunities yet. Click "+ Add Opportunity" to create one.</div>';
+          countEl.textContent = '';
+          return;
+        }
+
+        const opps = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        opps.sort((a, b) => {
+          if (a.deadline && b.deadline) return new Date(a.deadline) - new Date(b.deadline);
+          if (a.deadline) return -1;
+          if (b.deadline) return 1;
+          return (a.title || '').localeCompare(b.title || '');
+        });
+        countEl.textContent = '(' + opps.length + ')';
+
+        listEl.innerHTML = opps.map(opp => {
+          const type = (opp.type || 'scholarship').toLowerCase();
+          let dateStr = '';
+          if (opp.deadline) {
+            const d = new Date(opp.deadline + 'T00:00:00');
+            dateStr = ' &middot; Deadline ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          }
+          const meta = [opp.organization, opp.amount].filter(Boolean).join(' &middot; ');
+          return `<div class="event-list-item">
+            <div class="event-list-info">
+              <h4>${escapeHtml(opp.title)}</h4>
+              <span class="event-list-meta">${escapeHtml(meta)}${dateStr}</span>
+            </div>
+            <span class="event-list-tag" style="background:rgba(196,163,90,0.15);color:#8B7332;">${type}</span>
+            <div class="event-list-actions">
+              <button class="btn btn-edit" onclick="editOpp('${opp.id}')">Edit</button>
+              <button class="btn btn-delete" onclick="deleteOpp('${opp.id}', '${escapeHtml(opp.title)}')">Delete</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch (err) {
+        listEl.innerHTML = '<div class="empty-state">Error loading opportunities. Please refresh.</div>';
+      }
+    }
+
+    async function editOpp(id) {
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/opportunities/' + id + '.json');
+        const opp = await res.json();
+        if (!opp) return;
+
+        document.getElementById('oppEditId').value = id;
+        document.getElementById('oppFormTitle').textContent = 'Edit Opportunity';
+        document.getElementById('oppTitle').value = opp.title || '';
+        document.getElementById('oppType').value = opp.type || 'scholarship';
+        document.getElementById('oppDeadline').value = opp.deadline || '';
+        document.getElementById('oppOrganization').value = opp.organization || '';
+        document.getElementById('oppAmount').value = opp.amount || '';
+        document.getElementById('oppDescription').value = opp.description || '';
+        document.getElementById('oppLink').value = opp.link || '';
+        oppForm.classList.add('visible');
+        document.getElementById('oppTitle').focus();
+      } catch (err) {
+        showToast('Error loading opportunity.');
+      }
+    }
+
+    async function deleteOpp(id, title) {
+      if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
+      try {
+        await fetch(FIREBASE_DB_URL + '/opportunities/' + id + '.json', { method: 'DELETE' });
+        showToast('Opportunity deleted.');
+        loadOpportunities();
+      } catch (err) {
+        showToast('Error deleting opportunity.');
       }
     }
   </script>
