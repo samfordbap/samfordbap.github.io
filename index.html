@@ -175,6 +175,74 @@
       bottom: 0;
       background: radial-gradient(ellipse at 30% 20%, rgba(139,26,26,0.15) 0%, transparent 60%),
                   radial-gradient(ellipse at 70% 80%, rgba(196,163,90,0.1) 0%, transparent 50%);
+      z-index: 1;
+    }
+
+    .hero.has-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(27,42,74,0.75) 0%, rgba(27,42,74,0.85) 100%);
+      z-index: 1;
+    }
+
+    .hero-image-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    .hero-content { z-index: 2; }
+
+    /* ── Announcement Banner ── */
+    .announcement-banner {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.75rem 2rem;
+      z-index: 999;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .announcement-banner.visible { display: flex; }
+
+    .announcement-banner-content {
+      max-width: 900px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .announcement-banner-close {
+      background: none;
+      border: none;
+      color: var(--navy);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0 0.5rem;
+      opacity: 0.6;
+    }
+
+    .announcement-banner-close:hover { opacity: 1; }
+
+    body.has-banner .hero { padding-top: 11rem; }
+    body.has-banner nav { top: 0; }
+
+    @media (max-width: 768px) {
+      .announcement-banner {
+        font-size: 0.8rem;
+        padding: 0.6rem 1rem;
+      }
     }
 
     .hero-content {
@@ -912,8 +980,13 @@
 
     .opportunity-deadline {
       font-size: 0.825rem;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    .opportunity-deadline strong {
+      color: var(--navy);
       font-weight: 600;
-      color: var(--crimson);
     }
 
     .opportunity-link {
@@ -927,58 +1000,43 @@
 
     .firm-filters {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 1rem;
       margin-bottom: 2rem;
-      align-items: flex-end;
     }
 
-    .firm-filter-group {
+    .firm-filter-row {
       display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .firm-filter-group label {
+    .firm-filter-label {
       font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-light);
+      margin-right: 0.4rem;
+      min-width: 75px;
     }
 
-    .firm-filter-group select {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.825rem;
-      font-family: var(--sans);
-      border: 1px solid rgba(0,0,0,0.12);
-      border-radius: 6px;
-      background: var(--white);
-      color: var(--text-primary);
-      cursor: pointer;
-      min-width: 150px;
-    }
-
-    .firm-filter-group select:focus {
-      outline: none;
-      border-color: var(--navy);
-    }
-
-    .firm-sort-btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.825rem;
+    .firm-pill {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
       font-weight: 500;
-      font-family: var(--sans);
       border: 1px solid rgba(0,0,0,0.12);
-      border-radius: 6px;
+      border-radius: 100px;
       background: var(--white);
       color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.2s;
+      font-family: var(--sans);
     }
 
-    .firm-sort-btn:hover,
-    .firm-sort-btn.active {
+    .firm-pill:hover,
+    .firm-pill.active {
       background: var(--navy);
       color: var(--white);
       border-color: var(--navy);
@@ -1324,8 +1382,15 @@
     </div>
   </nav>
 
+  <!-- Announcement Banner -->
+  <div class="announcement-banner" id="announcementBanner">
+    <div class="announcement-banner-content" id="announcementBannerContent"></div>
+    <button class="announcement-banner-close" id="announcementBannerClose" aria-label="Dismiss">&times;</button>
+  </div>
+
   <!-- Hero -->
   <section class="hero" id="hero">
+    <div class="hero-image-bg" id="heroImageBg"></div>
     <div class="hero-content">
       <p class="hero-society">International Honor Society</p>
       <h1>Beta Alpha Psi</h1>
@@ -1338,30 +1403,29 @@
   <!-- About -->
   <section class="about" id="about">
     <div class="container">
-      <p class="section-label fade-in">Our Mission</p>
-      <h2 class="section-title fade-in">Three Pillars of Excellence</h2>
-      <p class="section-intro fade-in">Beta Alpha Psi recognizes outstanding academic achievement and complements members' formal education with professional development, technical knowledge, and a commitment to service.</p>
+      <p class="section-label fade-in">Our Pillars</p>
+      <h2 class="section-title fade-in">Professionalism, Leadership, Ethical Conduct</h2>
       <div class="pillars">
         <div class="pillar fade-in">
           <div class="pillar-icon professional">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
           </div>
-          <h3>Professional Development</h3>
-          <p>Connect with top firms, build your network, and gain the skills employers look for — from resume workshops to panel discussions with industry professionals.</p>
+          <h3>Professionalism</h3>
+          <p>Firm panels, networking events, and technical workshops that prepare members for real careers in accounting, finance, and information systems.</p>
         </div>
         <div class="pillar fade-in">
           <div class="pillar-icon technical">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
           </div>
-          <h3>Technical Excellence</h3>
-          <p>Go beyond the classroom with hands-on workshops in Excel, Power BI, Tableau, and other tools that set you apart in a data-driven profession.</p>
+          <h3>Leadership</h3>
+          <p>Officer roles, project leadership, and mentorship between upperclassmen and new members build practical leadership experience.</p>
         </div>
         <div class="pillar fade-in">
           <div class="pillar-icon service">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <h3>Community Service</h3>
-          <p>Give back through VITA tax preparation, financial literacy outreach, and community partnerships — making a real difference with your professional knowledge.</p>
+          <h3>Ethical Conduct</h3>
+          <p>Service to the community through VITA tax prep and financial literacy outreach, plus ethics-focused programming, reflects our commitment to using accounting for good.</p>
         </div>
       </div>
     </div>
@@ -1468,25 +1532,9 @@
     <div class="container">
       <p class="section-label fade-in">Giving Back</p>
       <h2 class="section-title fade-in">Community Service</h2>
-      <p class="section-intro fade-in">Service is at the heart of Beta Alpha Psi. Our chapter puts professional skills to work for the community through ongoing outreach programs.</p>
+      <p class="section-intro fade-in">Service is a core BAP requirement and a defining part of our chapter. Members put professional skills to work through <strong>VITA tax prep</strong> (IRS-certified, free returns for low-income families) and <strong>financial literacy workshops</strong> at Birmingham-area high schools.</p>
 
-      <div class="service-grid">
-        <div class="service-item fade-in">
-          <h3>VITA Tax Preparation</h3>
-          <p>Each spring, our members volunteer as IRS-certified tax preparers through the Volunteer Income Tax Assistance program. We provide free tax preparation services to low-income individuals and families in the Birmingham area who might not otherwise have access to professional help.</p>
-          <p class="service-highlight">Members earn IRS certification and gain real-world tax experience.</p>
-        </div>
-
-        <div class="service-item fade-in">
-          <h3>Financial Literacy Outreach</h3>
-          <p>We partner with local high schools to teach students the fundamentals of personal finance — budgeting, saving, understanding credit, and planning for college expenses. Our members develop and lead interactive workshops throughout the school year.</p>
-          <p class="service-highlight">Reaching the next generation with practical financial skills.</p>
-        </div>
-
-        <div class="service-note fade-in">
-          <strong>Service is a core requirement of BAP membership.</strong> Beta Alpha Psi's national organization emphasizes community service hours as a key component of chapter activity. Our members consistently exceed the national minimum, reflecting our chapter's commitment to using professional knowledge for public good.
-        </div>
-      </div>
+      <div id="upcomingServiceEvents" class="service-grid"></div>
     </div>
   </section>
 
@@ -1498,47 +1546,37 @@
       <p class="section-intro fade-in">Local and regional firms that recruit from Samford. Check back for updated hiring info and opportunities.</p>
 
       <div class="firm-filters fade-in" id="firmFilters">
-        <div class="firm-filter-group">
-          <label>Type</label>
-          <select id="firmFilterType">
-            <option value="all">All Types</option>
-            <option value="Big 4">Big 4</option>
-            <option value="National">National</option>
-            <option value="Regional">Regional</option>
-            <option value="Local">Local</option>
-            <option value="Industry">Industry</option>
-            <option value="Government">Government</option>
-          </select>
+        <div class="firm-filter-row">
+          <span class="firm-filter-label">Type</span>
+          <button class="firm-pill active" data-filter-type="all">All</button>
+          <button class="firm-pill" data-filter-type="Big 4">Big 4</button>
+          <button class="firm-pill" data-filter-type="National">National</button>
+          <button class="firm-pill" data-filter-type="Regional">Regional</button>
+          <button class="firm-pill" data-filter-type="Local">Local</button>
+          <button class="firm-pill" data-filter-type="Industry">Industry</button>
+          <button class="firm-pill" data-filter-type="Government">Government</button>
         </div>
-        <div class="firm-filter-group">
-          <label>Specialty</label>
-          <select id="firmFilterSpecialty">
-            <option value="all">All Specialties</option>
-            <option value="Audit">Audit</option>
-            <option value="Tax">Tax</option>
-            <option value="Advisory">Advisory</option>
-            <option value="Consulting">Consulting</option>
-            <option value="Forensic Accounting">Forensic Accounting</option>
-            <option value="Governmental">Governmental</option>
-            <option value="Technology">Technology</option>
-            <option value="Wealth Management">Wealth Management</option>
-          </select>
+        <div class="firm-filter-row">
+          <span class="firm-filter-label">Specialty</span>
+          <button class="firm-pill active" data-filter-spec="all">All</button>
+          <button class="firm-pill" data-filter-spec="Audit">Audit</button>
+          <button class="firm-pill" data-filter-spec="Tax">Tax</button>
+          <button class="firm-pill" data-filter-spec="Advisory">Advisory</button>
+          <button class="firm-pill" data-filter-spec="Consulting">Consulting</button>
+          <button class="firm-pill" data-filter-spec="Forensic Accounting">Forensic</button>
+          <button class="firm-pill" data-filter-spec="Governmental">Governmental</button>
+          <button class="firm-pill" data-filter-spec="Technology">Technology</button>
+          <button class="firm-pill" data-filter-spec="Wealth Management">Wealth Mgmt</button>
         </div>
-        <div class="firm-filter-group">
-          <label>Hiring</label>
-          <select id="firmFilterHiring">
-            <option value="all">All</option>
-            <option value="yes">Hiring Now</option>
-          </select>
-        </div>
-        <div class="firm-filter-group">
-          <label>Sort By</label>
-          <select id="firmSort">
-            <option value="name">Name (A–Z)</option>
-            <option value="size-desc">Size (Largest)</option>
-            <option value="size-asc">Size (Smallest)</option>
-            <option value="type">Type</option>
-          </select>
+        <div class="firm-filter-row">
+          <span class="firm-filter-label">Hiring</span>
+          <button class="firm-pill active" data-filter-hiring="all">All</button>
+          <button class="firm-pill" data-filter-hiring="yes">Hiring Now</button>
+          <span class="firm-filter-label" style="margin-left: 1.5rem;">Sort</span>
+          <button class="firm-pill active" data-sort="name">Name</button>
+          <button class="firm-pill" data-sort="size-desc">Largest</button>
+          <button class="firm-pill" data-sort="size-asc">Smallest</button>
+          <button class="firm-pill" data-sort="type">Type</button>
         </div>
       </div>
 
@@ -1652,6 +1690,7 @@
       <a href="https://www.bap.org" target="_blank" rel="noopener">BAP National</a> &middot;
       <a href="https://www.samford.edu" target="_blank" rel="noopener">Samford University</a>
     </p>
+    <p id="footerLastActivity" style="margin-top: 0.75rem; font-size: 0.75rem; opacity: 0.6;"></p>
   </footer>
 
   <!-- RSVP Modal -->
@@ -1735,21 +1774,69 @@
       return evDate < today;
     }
 
-    function buildCalendarUrl(ev) {
-      const d = new Date(ev.date + 'T00:00:00');
+    function formatTime12(timeStr) {
+      if (!timeStr) return '';
+      const [h, m] = timeStr.split(':');
+      let hour = parseInt(h);
+      const min = m || '00';
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12 || 12;
+      return hour + ':' + min + ' ' + ampm;
+    }
+
+    function downloadIcs(ev) {
       const pad = n => String(n).padStart(2, '0');
-      const start = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
-      const next = new Date(d);
-      next.setDate(d.getDate() + 1);
-      const end = next.getFullYear() + pad(next.getMonth()+1) + pad(next.getDate());
-      const params = new URLSearchParams({
-        action: 'TEMPLATE',
-        text: 'BAP: ' + (ev.title || 'Event'),
-        dates: start + '/' + end,
-        details: ev.description || '',
-        location: ev.location || ''
-      });
-      return 'https://calendar.google.com/calendar/render?' + params.toString();
+      const d = new Date(ev.date + 'T00:00:00');
+      let dtStart, dtEnd;
+      if (ev.time) {
+        // Timed event — 2 hour default duration
+        const [h, m] = ev.time.split(':').map(Number);
+        d.setHours(h, m, 0, 0);
+        const endD = new Date(d);
+        endD.setHours(d.getHours() + 2);
+        const fmt = dt => dt.getFullYear() + pad(dt.getMonth()+1) + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + pad(dt.getMinutes()) + '00';
+        dtStart = 'DTSTART:' + fmt(d);
+        dtEnd = 'DTEND:' + fmt(endD);
+      } else {
+        // All-day event
+        const start = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
+        const next = new Date(d);
+        next.setDate(d.getDate() + 1);
+        const end = next.getFullYear() + pad(next.getMonth()+1) + pad(next.getDate());
+        dtStart = 'DTSTART;VALUE=DATE:' + start;
+        dtEnd = 'DTEND;VALUE=DATE:' + end;
+      }
+
+      const now = new Date();
+      const dtStamp = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + 'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + '00Z';
+
+      const escape = s => (s || '').replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n');
+
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Samford BAP//EN',
+        'BEGIN:VEVENT',
+        'UID:' + (ev.id || Date.now()) + '@samfordbap.github.io',
+        'DTSTAMP:' + dtStamp,
+        dtStart,
+        dtEnd,
+        'SUMMARY:BAP: ' + escape(ev.title || 'Event'),
+        'DESCRIPTION:' + escape(ev.description || ''),
+        'LOCATION:' + escape(ev.location || ''),
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (ev.title || 'event').replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.ics';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     function formatUpdated(ms) {
@@ -1779,15 +1866,18 @@
         const month = MONTHS[d.getMonth()];
         const day = d.getDate();
         const cat = (ev.category || 'social').toLowerCase();
-        const loc = ev.location ? ' &middot; ' + ev.location : '';
+        const timeStr = ev.time ? formatTime12(ev.time) : '';
+        const locParts = [];
+        if (timeStr) locParts.push(timeStr);
+        if (ev.location) locParts.push(ev.location);
+        const locText = locParts.length ? ' &middot; ' + locParts.join(' &middot; ') : '';
         const past = isPastEvent(ev);
         const pastClass = past ? ' past' : '';
-        const calUrl = buildCalendarUrl(ev);
         const updatedHtml = ev.updatedAt ? '<div class="event-updated">Updated ' + formatUpdated(ev.updatedAt) + '</div>' : '';
         const actionsHtml = past ? '' :
           '<div class="event-actions">' +
-            '<button class="event-btn primary" onclick="openRsvpModal(\'' + ev.id + '\', \'' + (ev.title || '').replace(/'/g, "\\'") + '\', \'' + ev.date + '\')">RSVP</button>' +
-            '<a class="event-btn" href="' + calUrl + '" target="_blank" rel="noopener">+ Add to Calendar</a>' +
+            '<button class="event-btn primary" onclick="openRsvpModal(\'' + ev.id + '\', \'' + (ev.title || '').replace(/'/g, "\\'") + '\', \'' + ev.date + '\', \'' + (ev.time || '') + '\')">RSVP</button>' +
+            '<button class="event-btn" onclick=\'downloadIcs(' + JSON.stringify(ev).replace(/'/g, '&apos;') + ')\'>+ Add to Calendar</button>' +
           '</div>';
         return `<div class="event-card fade-in${pastClass}" data-category="${cat}">
           <div class="event-date">
@@ -1796,7 +1886,7 @@
           </div>
           <div class="event-info">
             <h4>${ev.title}</h4>
-            <p>${ev.description || ''}${loc}</p>
+            <p>${ev.description || ''}${locText}</p>
             ${actionsHtml}
             ${updatedHtml}
           </div>
@@ -1838,11 +1928,13 @@
     });
 
     // RSVP Modal
-    function openRsvpModal(eventId, title, date) {
+    function openRsvpModal(eventId, title, date, time) {
       document.getElementById('rsvpEventId').value = eventId;
       document.getElementById('rsvpEventTitle').textContent = title;
       const d = new Date(date + 'T00:00:00');
-      document.getElementById('rsvpEventMeta').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      let metaText = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      if (time) metaText += ' at ' + formatTime12(time);
+      document.getElementById('rsvpEventMeta').textContent = metaText;
       document.getElementById('rsvpName').value = '';
       document.getElementById('rsvpEmail').value = '';
       document.getElementById('rsvpComments').value = '';
@@ -1917,11 +2009,13 @@
       grid.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
+    let firmFilters = { type: 'all', spec: 'all', hiring: 'all', sort: 'name' };
+
     function applyFirmFilters() {
-      const typeFilter = document.getElementById('firmFilterType').value;
-      const specFilter = document.getElementById('firmFilterSpecialty').value;
-      const hiringFilter = document.getElementById('firmFilterHiring').value;
-      const sortBy = document.getElementById('firmSort').value;
+      const typeFilter = firmFilters.type;
+      const specFilter = firmFilters.spec;
+      const hiringFilter = firmFilters.hiring;
+      const sortBy = firmFilters.sort;
 
       let filtered = allFirms.filter(firm => {
         if (typeFilter !== 'all' && firm.type !== typeFilter) return false;
@@ -1947,8 +2041,38 @@
       renderFirmCards(filtered);
     }
 
-    ['firmFilterType','firmFilterSpecialty','firmFilterHiring','firmSort'].forEach(id => {
-      document.getElementById(id).addEventListener('change', applyFirmFilters);
+    // Wire up firm filter pills
+    document.querySelectorAll('[data-filter-type]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter-type]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        firmFilters.type = btn.dataset.filterType;
+        applyFirmFilters();
+      });
+    });
+    document.querySelectorAll('[data-filter-spec]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter-spec]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        firmFilters.spec = btn.dataset.filterSpec;
+        applyFirmFilters();
+      });
+    });
+    document.querySelectorAll('[data-filter-hiring]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter-hiring]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        firmFilters.hiring = btn.dataset.filterHiring;
+        applyFirmFilters();
+      });
+    });
+    document.querySelectorAll('[data-sort]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        firmFilters.sort = btn.dataset.sort;
+        applyFirmFilters();
+      });
     });
 
     fetch(FIREBASE_DB_URL + '/firms.json')
@@ -1957,6 +2081,7 @@
         if (!data) { renderFirmCards([]); return; }
         allFirms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
         applyFirmFilters();
+        updateLastActivity();
       })
       .catch(() => renderFirmCards([]));
 
@@ -1998,7 +2123,7 @@
         if (opp.deadline) {
           const d = new Date(opp.deadline + 'T00:00:00');
           const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          deadlineHtml = '<span class="opportunity-deadline">Deadline: ' + dateStr + '</span>';
+          deadlineHtml = '<span class="opportunity-deadline">Deadline: <strong>' + dateStr + '</strong></span>';
         }
         const linkHtml = opp.link ? '<a href="' + opp.link + '" target="_blank" rel="noopener" class="opportunity-link">Learn more &rarr;</a>' : '';
         const metaParts = [];
@@ -2034,6 +2159,7 @@
         if (!data) { allOpportunities = []; renderOpportunities(); return; }
         allOpportunities = Object.keys(data).map(key => ({ id: key, ...data[key] }));
         renderOpportunities();
+        updateLastActivity();
       })
       .catch(() => { allOpportunities = []; renderOpportunities(); });
 
@@ -2041,11 +2167,121 @@
     fetch(FIREBASE_DB_URL + '/events.json')
       .then(r => r.json())
       .then(data => {
-        if (!data) { allEvents = []; renderEvents(); return; }
+        if (!data) { allEvents = []; renderEvents(); renderUpcomingServiceEvents(); return; }
         allEvents = Object.keys(data).map(key => ({ id: key, ...data[key] }));
         renderEvents();
+        renderUpcomingServiceEvents();
+        renderAnnouncementBanner();
+        updateLastActivity();
       })
       .catch(() => { allEvents = []; renderEvents(); });
+
+    // Render upcoming service events
+    function renderUpcomingServiceEvents() {
+      const el = document.getElementById('upcomingServiceEvents');
+      if (!el) return;
+      const upcoming = allEvents
+        .filter(ev => (ev.category || '').toLowerCase() === 'service' && !isPastEvent(ev))
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 3);
+
+      if (upcoming.length === 0) {
+        el.innerHTML = '<div class="service-note fade-in" style="grid-column: 1 / -1;"><strong>Service is a core BAP requirement.</strong> Members consistently exceed the national minimum — keep an eye on the Events section above for upcoming service opportunities.</div>';
+        return;
+      }
+
+      el.innerHTML = upcoming.map(ev => {
+        const d = new Date(ev.date + 'T00:00:00');
+        const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+        const timeStr = ev.time ? ' at ' + formatTime12(ev.time) : '';
+        return '<div class="service-item fade-in">' +
+          '<h3>' + ev.title + '</h3>' +
+          '<p>' + (ev.description || '') + '</p>' +
+          '<p class="service-highlight">' + dateStr + timeStr + (ev.location ? ' &middot; ' + ev.location : '') + '</p>' +
+        '</div>';
+      }).join('');
+      el.querySelectorAll('.fade-in').forEach(node => observer.observe(node));
+    }
+
+    // ── Settings / Banner / Hero Image ──
+    let siteSettings = {};
+
+    function isEventToday(ev) {
+      const today = new Date();
+      const evDate = new Date(ev.date + 'T00:00:00');
+      return today.toDateString() === evDate.toDateString();
+    }
+
+    function renderAnnouncementBanner() {
+      const banner = document.getElementById('announcementBanner');
+      const content = document.getElementById('announcementBannerContent');
+      if (sessionStorage.getItem('bap_banner_dismissed') === 'true') return;
+
+      const messages = [];
+
+      // Manual announcement
+      if (siteSettings.announcementActive && siteSettings.announcement) {
+        messages.push('<strong>📣</strong> ' + siteSettings.announcement);
+      }
+
+      // Today's events
+      if (siteSettings.autoTodayEvents !== false) {
+        const todays = allEvents.filter(isEventToday);
+        if (todays.length) {
+          const list = todays.map(ev => {
+            const t = ev.time ? ' at ' + formatTime12(ev.time) : '';
+            return ev.title + t;
+          }).join(' · ');
+          messages.push('<strong>Happening today:</strong> ' + list);
+        }
+      }
+
+      if (messages.length) {
+        content.innerHTML = messages.join(' &nbsp;|&nbsp; ');
+        banner.classList.add('visible');
+        document.body.classList.add('has-banner');
+      }
+    }
+
+    document.getElementById('announcementBannerClose').addEventListener('click', () => {
+      document.getElementById('announcementBanner').classList.remove('visible');
+      document.body.classList.remove('has-banner');
+      sessionStorage.setItem('bap_banner_dismissed', 'true');
+    });
+
+    function applyHeroImage() {
+      if (siteSettings.heroImage) {
+        const bg = document.getElementById('heroImageBg');
+        bg.style.backgroundImage = 'url("' + siteSettings.heroImage + '")';
+        document.querySelector('.hero').classList.add('has-image');
+      }
+    }
+
+    // Last activity
+    function updateLastActivity() {
+      const allItems = [...allEvents, ...allFirms, ...allOpportunities];
+      const timestamps = allItems.map(i => i.updatedAt).filter(Boolean);
+      if (timestamps.length === 0) return;
+      const mostRecent = Math.max(...timestamps);
+      const days = Math.floor((Date.now() - mostRecent) / (1000 * 60 * 60 * 24));
+      let text;
+      if (days === 0) text = 'updated today';
+      else if (days === 1) text = 'updated 1 day ago';
+      else if (days < 30) text = 'updated ' + days + ' days ago';
+      else if (days < 365) text = 'updated ' + Math.floor(days / 30) + ' month' + (Math.floor(days/30) === 1 ? '' : 's') + ' ago';
+      else text = 'updated ' + Math.floor(days / 365) + ' year' + (Math.floor(days/365) === 1 ? '' : 's') + ' ago';
+      document.getElementById('footerLastActivity').textContent = 'Last ' + text;
+    }
+
+    // Fetch settings
+    fetch(FIREBASE_DB_URL + '/settings.json')
+      .then(r => r.json())
+      .then(data => {
+        siteSettings = data || {};
+        applyHeroImage();
+        if (allEvents.length > 0) renderAnnouncementBanner();
+      })
+      .catch(() => { siteSettings = {}; });
   </script>
 
 </body>

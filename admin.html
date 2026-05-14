@@ -591,6 +591,56 @@
     </div>
 
     <div class="admin-body">
+
+      <!-- Site Settings -->
+      <div class="admin-toolbar">
+        <h2>Site Settings</h2>
+        <button class="btn btn-cancel" id="toggleSettingsBtn">Show</button>
+      </div>
+      <div class="event-form" id="settingsForm">
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Announcement Banner Text</label>
+            <textarea id="settingsAnnouncement" placeholder="e.g. Meeting moved to Friday this week — see you at 5 PM in Brock 230!"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Banner Active</label>
+            <select id="settingsAnnouncementActive">
+              <option value="false">Off — hide banner</option>
+              <option value="true">On — show on homepage</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Show Today's Events Automatically</label>
+            <select id="settingsAutoToday">
+              <option value="true">Yes — show events happening today</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Hero Background Image URL (optional)</label>
+            <input type="url" id="settingsHeroImage" placeholder="e.g. https://i.imgur.com/your-image.jpg">
+            <span style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.3rem;">Tip: Upload a photo to imgur.com or similar, copy the direct image link, and paste here.</span>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-save" id="saveSettingsBtn">Save Settings</button>
+          <button class="btn btn-cancel" id="cancelSettingsBtn">Hide Panel</button>
+        </div>
+      </div>
+
+      <!-- Archive Button -->
+      <div style="background: rgba(196,163,90,0.08); border: 1px solid rgba(196,163,90,0.2); border-radius: 8px; padding: 1rem 1.5rem; margin: 1rem 0 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+          <strong>Archive old entries:</strong> moves events, opportunities, and firms older than 2 years to an archive.
+        </div>
+        <button class="btn btn-cancel" id="archiveOldBtn">Archive Old Entries</button>
+      </div>
+
       <div class="admin-toolbar">
         <h2>Events <span class="event-count" id="eventCount"></span></h2>
         <button class="btn btn-add" id="addEventBtn">+ Add Event</button>
@@ -612,6 +662,12 @@
             <input type="date" id="eventDate">
           </div>
           <div class="form-group">
+            <label>Time (optional)</label>
+            <input type="time" id="eventTime">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
             <label>Category</label>
             <select id="eventCategory">
               <option value="professional">Professional</option>
@@ -831,6 +887,9 @@
       <button class="admin-modal-close" onclick="closeRsvpViewer()">&times;</button>
       <h3 id="rsvpViewerTitle">RSVPs</h3>
       <p class="admin-modal-meta" id="rsvpViewerMeta"></p>
+      <div id="rsvpViewerActions" style="margin-bottom: 1rem; display: none;">
+        <button class="btn btn-add" onclick="emailAllRsvps()" style="font-size: 0.825rem;">Email All RSVPs</button>
+      </div>
       <div id="rsvpViewerList"></div>
     </div>
   </div>
@@ -860,7 +919,14 @@
     const loginError = document.getElementById('loginError');
     const passwordInput = document.getElementById('passwordInput');
 
-    if (sessionStorage.getItem('bap_admin') === 'true') {
+    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+    function isLoggedIn() {
+      const ts = parseInt(localStorage.getItem('bap_admin_ts') || '0');
+      return ts && (Date.now() - ts) < THIRTY_DAYS_MS;
+    }
+
+    if (isLoggedIn()) {
       loginScreen.style.display = 'none';
       adminPanel.style.display = 'block';
       loadEvents();
@@ -871,11 +937,12 @@
     async function attemptLogin() {
       const hash = await hashPassword(passwordInput.value);
       if (hash === ADMIN_PASSWORD_HASH) {
-        sessionStorage.setItem('bap_admin', 'true');
+        localStorage.setItem('bap_admin_ts', Date.now().toString());
         loginScreen.style.display = 'none';
         adminPanel.style.display = 'block';
         loadEvents();
         loadFirms();
+        loadOpportunities();
       } else {
         loginError.style.display = 'block';
         passwordInput.value = '';
@@ -887,7 +954,7 @@
     passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      sessionStorage.removeItem('bap_admin');
+      localStorage.removeItem('bap_admin_ts');
       loginScreen.style.display = 'flex';
       adminPanel.style.display = 'none';
       passwordInput.value = '';
@@ -904,6 +971,7 @@
       document.getElementById('formTitle').textContent = 'Add New Event';
       document.getElementById('eventTitle').value = '';
       document.getElementById('eventDate').value = '';
+      document.getElementById('eventTime').value = '';
       document.getElementById('eventCategory').value = 'professional';
       document.getElementById('eventLocation').value = '';
       document.getElementById('eventDescription').value = '';
@@ -919,6 +987,7 @@
     saveEventBtn.addEventListener('click', async () => {
       const title = document.getElementById('eventTitle').value.trim();
       const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
       const category = document.getElementById('eventCategory').value;
       const location = document.getElementById('eventLocation').value.trim();
       const description = document.getElementById('eventDescription').value.trim();
@@ -932,7 +1001,7 @@
 
       if (postedBy) localStorage.setItem('bap_admin_name', postedBy);
 
-      const eventData = { title, date, category, location, description, postedBy, updatedAt: Date.now() };
+      const eventData = { title, date, time, category, location, description, postedBy, updatedAt: Date.now() };
 
       try {
         if (editId) {
@@ -977,17 +1046,19 @@
         listEl.innerHTML = events.map(ev => {
           const d = new Date(ev.date + 'T00:00:00');
           const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          const timeStr = ev.time ? ' at ' + formatTime12(ev.time) : '';
           const cat = (ev.category || 'social').toLowerCase();
           const postedByHtml = ev.postedBy ? `<div class="event-list-posted-by">Posted by ${escapeHtml(ev.postedBy)}</div>` : '';
           return `<div class="event-list-item">
             <div class="event-list-info">
               <h4>${escapeHtml(ev.title)}</h4>
-              <span class="event-list-meta">${dateStr}${ev.location ? ' &middot; ' + escapeHtml(ev.location) : ''}</span>
+              <span class="event-list-meta">${dateStr}${timeStr}${ev.location ? ' &middot; ' + escapeHtml(ev.location) : ''}</span>
               ${postedByHtml}
             </div>
             <span class="event-list-tag ${cat}">${cat}</span>
             <div class="event-list-actions">
               <button class="btn btn-rsvp" onclick="viewRsvps('${ev.id}', '${escapeHtml(ev.title)}', '${dateStr}')">RSVPs</button>
+              <button class="btn btn-edit" onclick="duplicateEvent('${ev.id}')">Duplicate</button>
               <button class="btn btn-edit" onclick="editEvent('${ev.id}')">Edit</button>
               <button class="btn btn-delete" onclick="deleteEvent('${ev.id}', '${escapeHtml(ev.title)}')">Delete</button>
             </div>
@@ -1014,6 +1085,7 @@
         document.getElementById('formTitle').textContent = 'Edit Event';
         document.getElementById('eventTitle').value = ev.title || '';
         document.getElementById('eventDate').value = ev.date || '';
+        document.getElementById('eventTime').value = ev.time || '';
         document.getElementById('eventCategory').value = ev.category || 'professional';
         document.getElementById('eventLocation').value = ev.location || '';
         document.getElementById('eventDescription').value = ev.description || '';
@@ -1363,8 +1435,11 @@
 
     // ── RSVP Viewer ──
     async function viewRsvps(eventId, title, dateStr) {
+      currentRsvpEventTitle = title;
+      currentRsvpEmails = [];
       document.getElementById('rsvpViewerTitle').textContent = title;
       document.getElementById('rsvpViewerMeta').textContent = dateStr;
+      document.getElementById('rsvpViewerActions').style.display = 'none';
       document.getElementById('rsvpViewerList').innerHTML = '<div class="empty-state">Loading...</div>';
       document.getElementById('rsvpViewerModal').classList.add('open');
 
@@ -1381,7 +1456,12 @@
         const rsvps = Object.keys(data).map(key => ({ id: key, ...data[key] }));
         rsvps.sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
 
-        document.getElementById('rsvpViewerMeta').textContent = dateStr + ' &middot; ' + rsvps.length + ' RSVP' + (rsvps.length === 1 ? '' : 's');
+        currentRsvpEmails = rsvps.map(r => r.email).filter(e => e && e.includes('@'));
+        if (currentRsvpEmails.length > 0) {
+          document.getElementById('rsvpViewerActions').style.display = 'block';
+        }
+
+        document.getElementById('rsvpViewerMeta').textContent = dateStr + ' · ' + rsvps.length + ' RSVP' + (rsvps.length === 1 ? '' : 's');
 
         listEl.innerHTML = rsvps.map(r => {
           const when = r.submittedAt ? new Date(r.submittedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
@@ -1401,6 +1481,146 @@
 
     function closeRsvpViewer() {
       document.getElementById('rsvpViewerModal').classList.remove('open');
+    }
+
+    let currentRsvpEmails = [];
+    let currentRsvpEventTitle = '';
+
+    // ── Email All RSVPs ──
+    function emailAllRsvps() {
+      if (!currentRsvpEmails.length) {
+        showToast('No email addresses to send to.');
+        return;
+      }
+      const subject = encodeURIComponent('BAP: ' + currentRsvpEventTitle);
+      const bcc = currentRsvpEmails.join(',');
+      window.location.href = 'mailto:?bcc=' + bcc + '&subject=' + subject;
+    }
+
+    // ── Duplicate Event ──
+    async function duplicateEvent(id) {
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/events/' + id + '.json');
+        const ev = await res.json();
+        if (!ev) return;
+
+        document.getElementById('editId').value = '';
+        document.getElementById('formTitle').textContent = 'Duplicate Event';
+        document.getElementById('eventTitle').value = (ev.title || '') + ' (Copy)';
+        document.getElementById('eventDate').value = '';
+        document.getElementById('eventTime').value = ev.time || '';
+        document.getElementById('eventCategory').value = ev.category || 'professional';
+        document.getElementById('eventLocation').value = ev.location || '';
+        document.getElementById('eventDescription').value = ev.description || '';
+        document.getElementById('eventPostedBy').value = localStorage.getItem('bap_admin_name') || '';
+        eventForm.classList.add('visible');
+        document.getElementById('eventDate').focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('Edit the date, then save to create the duplicate.');
+      } catch (err) {
+        showToast('Error duplicating event.');
+      }
+    }
+
+    // ── Site Settings ──
+    const settingsForm = document.getElementById('settingsForm');
+    const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
+
+    toggleSettingsBtn.addEventListener('click', () => {
+      const isOpen = settingsForm.classList.toggle('visible');
+      toggleSettingsBtn.textContent = isOpen ? 'Hide' : 'Show';
+      if (isOpen) loadSettings();
+    });
+
+    document.getElementById('cancelSettingsBtn').addEventListener('click', () => {
+      settingsForm.classList.remove('visible');
+      toggleSettingsBtn.textContent = 'Show';
+    });
+
+    async function loadSettings() {
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/settings.json');
+        const s = await res.json() || {};
+        document.getElementById('settingsAnnouncement').value = s.announcement || '';
+        document.getElementById('settingsAnnouncementActive').value = s.announcementActive ? 'true' : 'false';
+        document.getElementById('settingsAutoToday').value = (s.autoTodayEvents === false) ? 'false' : 'true';
+        document.getElementById('settingsHeroImage').value = s.heroImage || '';
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+      const settings = {
+        announcement: document.getElementById('settingsAnnouncement').value.trim(),
+        announcementActive: document.getElementById('settingsAnnouncementActive').value === 'true',
+        autoTodayEvents: document.getElementById('settingsAutoToday').value === 'true',
+        heroImage: document.getElementById('settingsHeroImage').value.trim(),
+        updatedAt: Date.now()
+      };
+      try {
+        await fetch(FIREBASE_DB_URL + '/settings.json', {
+          method: 'PUT',
+          body: JSON.stringify(settings)
+        });
+        showToast('Settings saved!');
+      } catch (err) {
+        showToast('Error saving settings.');
+      }
+    });
+
+    // ── Archive Old Entries ──
+    document.getElementById('archiveOldBtn').addEventListener('click', async () => {
+      if (!confirm('Archive all entries older than 2 years? They will be moved to an archive (not deleted) but won\'t appear in the main list.')) return;
+
+      const twoYearsAgo = new Date();
+      twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+      let archivedCount = 0;
+
+      try {
+        // Archive events with date older than 2 years
+        const eventsRes = await fetch(FIREBASE_DB_URL + '/events.json');
+        const events = await eventsRes.json() || {};
+        for (const [id, ev] of Object.entries(events)) {
+          if (ev.date && new Date(ev.date) < twoYearsAgo) {
+            await fetch(FIREBASE_DB_URL + '/archive/events/' + id + '.json', {
+              method: 'PUT', body: JSON.stringify(ev)
+            });
+            await fetch(FIREBASE_DB_URL + '/events/' + id + '.json', { method: 'DELETE' });
+            archivedCount++;
+          }
+        }
+
+        // Archive opportunities with deadline older than 2 years
+        const oppsRes = await fetch(FIREBASE_DB_URL + '/opportunities.json');
+        const opps = await oppsRes.json() || {};
+        for (const [id, opp] of Object.entries(opps)) {
+          if (opp.deadline && new Date(opp.deadline) < twoYearsAgo) {
+            await fetch(FIREBASE_DB_URL + '/archive/opportunities/' + id + '.json', {
+              method: 'PUT', body: JSON.stringify(opp)
+            });
+            await fetch(FIREBASE_DB_URL + '/opportunities/' + id + '.json', { method: 'DELETE' });
+            archivedCount++;
+          }
+        }
+
+        showToast('Archived ' + archivedCount + ' entries.');
+        loadEvents();
+        loadOpportunities();
+      } catch (err) {
+        showToast('Error archiving entries.');
+      }
+    });
+
+    // ── Time formatting helper ──
+    function formatTime12(timeStr) {
+      if (!timeStr) return '';
+      const [h, m] = timeStr.split(':');
+      let hour = parseInt(h);
+      const min = m || '00';
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12 || 12;
+      return hour + ':' + min + ' ' + ampm;
     }
   </script>
 
