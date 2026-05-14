@@ -99,6 +99,21 @@
       color: var(--crimson);
     }
 
+    .nav-admin {
+      padding: 0.35rem 0.85rem;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 100px;
+      font-size: 0.75rem !important;
+      color: var(--text-light) !important;
+      transition: all 0.2s;
+    }
+
+    .nav-admin:hover {
+      background: var(--navy);
+      color: var(--white) !important;
+      border-color: var(--navy);
+    }
+
     .nav-toggle {
       display: none;
       background: none;
@@ -423,6 +438,14 @@
       font-weight: 700;
       color: var(--navy);
       line-height: 1.2;
+    }
+
+    .event-year {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-light);
+      margin-top: 0.15rem;
+      letter-spacing: 0.05em;
     }
 
     .event-info h4 {
@@ -791,7 +814,7 @@
 
     /* ── Firms ── */
     .firms {
-      background: var(--cream);
+      background: var(--white);
     }
 
     .firms-grid {
@@ -801,7 +824,7 @@
     }
 
     .firm-card {
-      background: var(--white);
+      background: var(--cream);
       border: 1px solid rgba(0,0,0,0.06);
       border-radius: 8px;
       padding: 2rem;
@@ -861,7 +884,7 @@
     .firm-detail {
       font-size: 0.775rem;
       color: var(--text-light);
-      background: var(--cream);
+      background: var(--white);
       padding: 0.3rem 0.7rem;
       border-radius: 4px;
     }
@@ -879,7 +902,7 @@
 
     /* ── Opportunities ── */
     .opportunities {
-      background: var(--white);
+      background: var(--cream);
     }
 
     .opportunity-filters {
@@ -915,7 +938,7 @@
     }
 
     .opportunity-card {
-      background: var(--cream);
+      background: var(--white);
       border: 1px solid rgba(0,0,0,0.05);
       border-radius: 8px;
       padding: 1.75rem 2rem;
@@ -1045,7 +1068,7 @@
     .firm-specialty-tag {
       font-size: 0.725rem;
       color: var(--text-light);
-      background: var(--cream);
+      background: var(--white);
       padding: 0.25rem 0.6rem;
       border-radius: 4px;
       white-space: nowrap;
@@ -1054,7 +1077,7 @@
     .firm-size-label {
       font-size: 0.775rem;
       color: var(--text-light);
-      background: var(--cream);
+      background: var(--white);
       padding: 0.3rem 0.7rem;
       border-radius: 4px;
     }
@@ -1170,6 +1193,7 @@
       padding: 2.5rem;
       background: var(--cream);
       border-radius: 8px;
+      align-self: start;
     }
 
     .join-contact h3 {
@@ -1378,6 +1402,7 @@
         <li><a href="#firms">Firms</a></li>
         <li><a href="#opportunities">Opportunities</a></li>
         <li><a href="#join">Join</a></li>
+        <li><a href="admin.html" class="nav-admin">Admin</a></li>
       </ul>
     </div>
   </nav>
@@ -1879,10 +1904,12 @@
             '<button class="event-btn primary" onclick="openRsvpModal(\'' + ev.id + '\', \'' + (ev.title || '').replace(/'/g, "\\'") + '\', \'' + ev.date + '\', \'' + (ev.time || '') + '\')">RSVP</button>' +
             '<button class="event-btn" onclick=\'downloadIcs(' + JSON.stringify(ev).replace(/'/g, '&apos;') + ')\'>+ Add to Calendar</button>' +
           '</div>';
+        const year = d.getFullYear();
         return `<div class="event-card fade-in${pastClass}" data-category="${cat}">
           <div class="event-date">
             <div class="event-month">${month}</div>
             <div class="event-day">${day}</div>
+            <div class="event-year">${year}</div>
           </div>
           <div class="event-info">
             <h4>${ev.title}</h4>
@@ -2192,7 +2219,7 @@
 
       el.innerHTML = upcoming.map(ev => {
         const d = new Date(ev.date + 'T00:00:00');
-        const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+        const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' });
         const timeStr = ev.time ? ' at ' + formatTime12(ev.time) : '';
         return '<div class="service-item fade-in">' +
           '<h3>' + ev.title + '</h3>' +
