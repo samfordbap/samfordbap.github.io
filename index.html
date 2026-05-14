@@ -384,6 +384,291 @@
     .event-tag.service { background: rgba(196,163,90,0.12); color: #8B7332; }
     .event-tag.social { background: rgba(100,140,100,0.1); color: #3D6B3D; }
 
+    .event-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .event-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.775rem;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: var(--white);
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      font-family: var(--sans);
+    }
+
+    .event-btn:hover {
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+
+    .event-btn.primary {
+      background: var(--crimson);
+      color: var(--white);
+      border-color: var(--crimson);
+    }
+
+    .event-btn.primary:hover {
+      background: var(--crimson-dark);
+      color: var(--white);
+      border-color: var(--crimson-dark);
+    }
+
+    .event-updated {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .event-card.past {
+      opacity: 0.65;
+    }
+
+    .past-events-toggle {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .past-events-toggle button {
+      background: none;
+      border: 1px dashed rgba(0,0,0,0.2);
+      padding: 0.6rem 1.5rem;
+      border-radius: 100px;
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: all 0.2s;
+    }
+
+    .past-events-toggle button:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
+    /* ── RSVP Modal ── */
+    .rsvp-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .rsvp-modal.open { display: flex; }
+
+    .rsvp-dialog {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .rsvp-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-light);
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rsvp-close:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .rsvp-dialog h3 {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+      padding-right: 2rem;
+    }
+
+    .rsvp-event-meta {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .rsvp-form-group {
+      margin-bottom: 1rem;
+    }
+
+    .rsvp-form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .rsvp-form-group input,
+    .rsvp-form-group textarea {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      font-size: 0.9rem;
+      font-family: var(--sans);
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      background: var(--white);
+    }
+
+    .rsvp-form-group input:focus,
+    .rsvp-form-group textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+
+    .rsvp-form-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .rsvp-submit {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--crimson);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.2s;
+    }
+
+    .rsvp-submit:hover { background: var(--crimson-dark); }
+
+    .rsvp-success {
+      text-align: center;
+      padding: 1rem 0;
+      color: var(--text-secondary);
+    }
+
+    .rsvp-success-icon {
+      font-size: 2.5rem;
+      color: #2D7A3A;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── FAQ ── */
+    .faq-list {
+      margin-top: 1.5rem;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding: 0;
+    }
+
+    .faq-item summary {
+      padding: 1rem 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .faq-item summary:hover { color: var(--crimson); }
+
+    .faq-item summary::-webkit-details-marker { display: none; }
+
+    .faq-item summary::after {
+      content: '+';
+      font-size: 1.25rem;
+      color: var(--gold);
+      font-weight: 400;
+      transition: transform 0.2s;
+    }
+
+    .faq-item[open] summary::after {
+      content: '−';
+    }
+
+    .faq-answer {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      padding: 0 0 1.25rem;
+    }
+
+    /* ── Advisor Card ── */
+    .advisor-card {
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--white);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+    }
+
+    .advisor-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+
+    .advisor-name {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      color: var(--navy);
+      margin-bottom: 0.15rem;
+    }
+
+    .advisor-credentials {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .advisor-link {
+      font-size: 0.85rem;
+      color: var(--crimson);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .advisor-link:hover { text-decoration: underline; }
+
     /* ── Resources ── */
     .resources {
       background: var(--white);
@@ -1100,6 +1385,10 @@
       <div class="events-grid" id="eventsGrid">
         <p style="color: var(--text-light); font-size: 0.95rem;">Loading events...</p>
       </div>
+
+      <div class="past-events-toggle fade-in">
+        <button id="togglePastEvents">Show past events</button>
+      </div>
     </div>
   </section>
 
@@ -1292,22 +1581,53 @@
           <p>Beta Alpha Psi is open to students who meet the following criteria:</p>
           <ul class="eligibility-list">
             <li>Enrolled in accounting, finance, or information systems at Samford University</li>
-            <li>Completed at least one upper-level course in your major</li>
+            <li>Completed Intermediate Accounting I</li>
             <li>Maintain a minimum 3.0 overall GPA and 3.25 major GPA</li>
             <li>Committed to attending chapter meetings and completing service hours</li>
           </ul>
-          <h3>How to Join</h3>
-          <p>We accept new members each fall and spring semester. Attend our kickoff meeting to learn more, or reach out to our officers to get started. Active membership requires participation in professional events, technical workshops, and community service activities throughout the semester.</p>
+          <h3>How Members Are Selected</h3>
+          <p>There's no formal application. After students complete Intermediate Accounting I, our faculty advisor Mrs. Newberry reviews GPAs and extends personal invitations to qualifying students. If you meet the criteria, expect an email from her.</p>
+
+          <div class="advisor-card">
+            <div class="advisor-label">Faculty Advisor</div>
+            <div class="advisor-name">Michelle R. Newberry, MAcc, CPA</div>
+            <div class="advisor-credentials">Assistant Professor of Accounting &middot; Brock School of Business</div>
+            <a href="https://www.samford.edu/business/directory/Newberry-Michelle-R" target="_blank" rel="noopener" class="advisor-link">View Samford profile &rarr;</a>
+          </div>
+
+          <h3 style="margin-top: 2.5rem;">Frequently Asked Questions</h3>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>What's the time commitment?</summary>
+              <div class="faq-answer">Members are expected to attend chapter meetings and complete a minimum number of service and professional development hours each semester. Most members find the time commitment manageable alongside coursework — typically 2–4 hours per week during the semester.</div>
+            </details>
+            <details class="faq-item">
+              <summary>Do I have to be on the CPA track?</summary>
+              <div class="faq-answer">No. BAP is open to accounting, finance, and information systems students. While many members pursue the CPA, others go into corporate finance, consulting, government, or graduate school. The chapter provides value regardless of your post-graduation path.</div>
+            </details>
+            <details class="faq-item">
+              <summary>Are there dues or fees?</summary>
+              <div class="faq-answer">Yes. New members pay a one-time national induction fee, and there are modest chapter dues each semester to cover events and operations. Specific amounts are shared with invitees during onboarding.</div>
+            </details>
+            <details class="faq-item">
+              <summary>When are members selected?</summary>
+              <div class="faq-answer">Mrs. Newberry reviews GPAs and extends invitations at the end of each semester, once Intermediate Accounting I grades are finalized. Most students join during their junior year.</div>
+            </details>
+            <details class="faq-item">
+              <summary>Can I get involved before being inducted?</summary>
+              <div class="faq-answer">Many of our events — workshops, panels, and study groups — are open to all accounting and finance students. Watch the events section above and feel free to come to anything that interests you, even before you're officially a member.</div>
+            </details>
+          </div>
         </div>
 
         <div class="join-contact fade-in">
           <h3>Contact Us</h3>
-          <p>Have questions about membership, events, or our chapter? We'd love to hear from you.</p>
-          <a href="mailto:bap@samford.edu" class="contact-link">
+          <p>Have questions about membership, events, or our chapter? Reach out to our faculty advisor.</p>
+          <a href="mailto:mnewberr@samford.edu" class="contact-link">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
-            Email Us
+            Email Mrs. Newberry
           </a>
-          <span class="contact-email">Or reach us directly at <a href="mailto:bap@samford.edu">bap@samford.edu</a></span>
+          <span class="contact-email">Or directly at <a href="mailto:mnewberr@samford.edu">mnewberr@samford.edu</a></span>
 
           <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
             <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--navy); margin-bottom: 0.5rem;">Find Us</h3>
@@ -1333,6 +1653,39 @@
       <a href="https://www.samford.edu" target="_blank" rel="noopener">Samford University</a>
     </p>
   </footer>
+
+  <!-- RSVP Modal -->
+  <div class="rsvp-modal" id="rsvpModal" onclick="if(event.target === this) closeRsvpModal()">
+    <div class="rsvp-dialog">
+      <button class="rsvp-close" onclick="closeRsvpModal()" aria-label="Close">&times;</button>
+      <div id="rsvpFormContent">
+        <h3 id="rsvpEventTitle">RSVP</h3>
+        <p class="rsvp-event-meta" id="rsvpEventMeta"></p>
+        <input type="hidden" id="rsvpEventId">
+        <div class="rsvp-form-group">
+          <label>Your Name *</label>
+          <input type="text" id="rsvpName" placeholder="Full name" required>
+        </div>
+        <div class="rsvp-form-group">
+          <label>Email (optional)</label>
+          <input type="email" id="rsvpEmail" placeholder="you@samford.edu">
+        </div>
+        <div class="rsvp-form-group">
+          <label>Comments / Questions (optional)</label>
+          <textarea id="rsvpComments" placeholder="Anything you'd like to share?"></textarea>
+        </div>
+        <button class="rsvp-submit" onclick="submitRsvp()">Send RSVP</button>
+      </div>
+      <div id="rsvpSuccessContent" style="display:none;">
+        <div class="rsvp-success">
+          <div class="rsvp-success-icon">✓</div>
+          <h3 style="padding-right:0;">You're on the list!</h3>
+          <p style="margin-top: 0.5rem; color: var(--text-light); font-size: 0.9rem;">We'll see you at the event.</p>
+          <button class="rsvp-submit" style="margin-top: 1.5rem;" onclick="closeRsvpModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const FIREBASE_DB_URL = 'https://samford-bap-default-rtdb.firebaseio.com';
@@ -1372,23 +1725,71 @@
 
     // Load events from Firebase
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let allEvents = [];
+    let showPastEvents = false;
 
-    function renderEvents(events) {
+    function isPastEvent(ev) {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const evDate = new Date(ev.date + 'T00:00:00');
+      return evDate < today;
+    }
+
+    function buildCalendarUrl(ev) {
+      const d = new Date(ev.date + 'T00:00:00');
+      const pad = n => String(n).padStart(2, '0');
+      const start = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
+      const next = new Date(d);
+      next.setDate(d.getDate() + 1);
+      const end = next.getFullYear() + pad(next.getMonth()+1) + pad(next.getDate());
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: 'BAP: ' + (ev.title || 'Event'),
+        dates: start + '/' + end,
+        details: ev.description || '',
+        location: ev.location || ''
+      });
+      return 'https://calendar.google.com/calendar/render?' + params.toString();
+    }
+
+    function formatUpdated(ms) {
+      if (!ms) return '';
+      const d = new Date(ms);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function renderEvents() {
       const grid = document.getElementById('eventsGrid');
-      if (!events || events.length === 0) {
+      const filtered = showPastEvents ? allEvents : allEvents.filter(ev => !isPastEvent(ev));
+
+      if (!filtered || filtered.length === 0) {
         grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">No upcoming events — check back soon!</p>';
         return;
       }
 
-      events.sort((a, b) => new Date(a.date) - new Date(b.date));
+      filtered.sort((a, b) => {
+        const aPast = isPastEvent(a), bPast = isPastEvent(b);
+        if (aPast !== bPast) return aPast ? 1 : -1;
+        if (aPast && bPast) return new Date(b.date) - new Date(a.date);
+        return new Date(a.date) - new Date(b.date);
+      });
 
-      grid.innerHTML = events.map(ev => {
+      grid.innerHTML = filtered.map(ev => {
         const d = new Date(ev.date + 'T00:00:00');
         const month = MONTHS[d.getMonth()];
         const day = d.getDate();
         const cat = (ev.category || 'social').toLowerCase();
         const loc = ev.location ? ' &middot; ' + ev.location : '';
-        return `<div class="event-card fade-in" data-category="${cat}">
+        const past = isPastEvent(ev);
+        const pastClass = past ? ' past' : '';
+        const calUrl = buildCalendarUrl(ev);
+        const updatedHtml = ev.updatedAt ? '<div class="event-updated">Updated ' + formatUpdated(ev.updatedAt) + '</div>' : '';
+        const actionsHtml = past ? '' :
+          '<div class="event-actions">' +
+            '<button class="event-btn primary" onclick="openRsvpModal(\'' + ev.id + '\', \'' + (ev.title || '').replace(/'/g, "\\'") + '\', \'' + ev.date + '\')">RSVP</button>' +
+            '<a class="event-btn" href="' + calUrl + '" target="_blank" rel="noopener">+ Add to Calendar</a>' +
+          '</div>';
+        return `<div class="event-card fade-in${pastClass}" data-category="${cat}">
           <div class="event-date">
             <div class="event-month">${month}</div>
             <div class="event-day">${day}</div>
@@ -1396,6 +1797,8 @@
           <div class="event-info">
             <h4>${ev.title}</h4>
             <p>${ev.description || ''}${loc}</p>
+            ${actionsHtml}
+            ${updatedHtml}
           </div>
           <span class="event-tag ${cat}">${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
         </div>`;
@@ -1427,6 +1830,55 @@
       });
     });
 
+    // Past events toggle
+    document.getElementById('togglePastEvents').addEventListener('click', () => {
+      showPastEvents = !showPastEvents;
+      document.getElementById('togglePastEvents').textContent = showPastEvents ? 'Hide past events' : 'Show past events';
+      renderEvents();
+    });
+
+    // RSVP Modal
+    function openRsvpModal(eventId, title, date) {
+      document.getElementById('rsvpEventId').value = eventId;
+      document.getElementById('rsvpEventTitle').textContent = title;
+      const d = new Date(date + 'T00:00:00');
+      document.getElementById('rsvpEventMeta').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('rsvpName').value = '';
+      document.getElementById('rsvpEmail').value = '';
+      document.getElementById('rsvpComments').value = '';
+      document.getElementById('rsvpFormContent').style.display = '';
+      document.getElementById('rsvpSuccessContent').style.display = 'none';
+      document.getElementById('rsvpModal').classList.add('open');
+      setTimeout(() => document.getElementById('rsvpName').focus(), 50);
+    }
+
+    function closeRsvpModal() {
+      document.getElementById('rsvpModal').classList.remove('open');
+    }
+
+    async function submitRsvp() {
+      const eventId = document.getElementById('rsvpEventId').value;
+      const name = document.getElementById('rsvpName').value.trim();
+      const email = document.getElementById('rsvpEmail').value.trim();
+      const comments = document.getElementById('rsvpComments').value.trim();
+
+      if (!name) {
+        alert('Please enter your name.');
+        return;
+      }
+
+      try {
+        await fetch(FIREBASE_DB_URL + '/rsvps/' + eventId + '.json', {
+          method: 'POST',
+          body: JSON.stringify({ name, email, comments, submittedAt: Date.now() })
+        });
+        document.getElementById('rsvpFormContent').style.display = 'none';
+        document.getElementById('rsvpSuccessContent').style.display = '';
+      } catch (err) {
+        alert('There was an error submitting your RSVP. Please try again.');
+      }
+    }
+
     // Load firms from Firebase
     let allFirms = [];
 
@@ -1451,6 +1903,7 @@
         if (firm.location) detailParts.push('<span class="firm-detail">' + firm.location + '</span>');
         if (firm.size) detailParts.push('<span class="firm-size-label">' + formatFirmSize(firm.size) + '</span>');
         const detailsHtml = detailParts.length ? '<div class="firm-details">' + detailParts.join('') + '</div>' : '';
+        const updatedHtml = firm.updatedAt ? '<div class="event-updated">Updated ' + formatUpdated(firm.updatedAt) + '</div>' : '';
         return '<div class="firm-card fade-in">' +
           '<div class="firm-header"><h3>' + (firm.name || '') + '</h3>' + hiringBadge + '</div>' +
           (firm.type ? '<div class="firm-type">' + firm.type + '</div>' : '') +
@@ -1458,6 +1911,7 @@
           detailsHtml +
           specHtml +
           website +
+          updatedHtml +
         '</div>';
       }).join('');
       grid.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
@@ -1510,11 +1964,19 @@
     let allOpportunities = [];
     let activeOppFilter = 'all';
 
+    function isOpportunityExpired(opp) {
+      if (!opp.deadline) return false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      return new Date(opp.deadline + 'T00:00:00') < today;
+    }
+
     function renderOpportunities() {
       const grid = document.getElementById('opportunitiesGrid');
-      const filtered = activeOppFilter === 'all'
-        ? allOpportunities
-        : allOpportunities.filter(o => (o.type || '').toLowerCase() === activeOppFilter);
+      let filtered = allOpportunities.filter(o => !isOpportunityExpired(o));
+      if (activeOppFilter !== 'all') {
+        filtered = filtered.filter(o => (o.type || '').toLowerCase() === activeOppFilter);
+      }
 
       if (!filtered || filtered.length === 0) {
         grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">No opportunities in this category right now — check back soon!</p>';
@@ -1579,11 +2041,11 @@
     fetch(FIREBASE_DB_URL + '/events.json')
       .then(r => r.json())
       .then(data => {
-        if (!data) { renderEvents([]); return; }
-        const events = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-        renderEvents(events);
+        if (!data) { allEvents = []; renderEvents(); return; }
+        allEvents = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        renderEvents();
       })
-      .catch(() => renderEvents([]));
+      .catch(() => { allEvents = []; renderEvents(); });
   </script>
 
 </body>

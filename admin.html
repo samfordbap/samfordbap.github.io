@@ -374,6 +374,114 @@
 
     .view-site-link:hover { text-decoration: underline; }
 
+    .btn-rsvp {
+      background: rgba(45,122,58,0.1);
+      color: #2D7A3A;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .btn-rsvp:hover { background: rgba(45,122,58,0.18); }
+
+    .event-list-posted-by {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+
+    /* Admin RSVP Modal */
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .admin-modal.open { display: flex; }
+
+    .admin-modal-dialog {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 640px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .admin-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-light);
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .admin-modal-close:hover { background: rgba(0,0,0,0.05); }
+
+    .admin-modal-dialog h3 {
+      font-size: 1.15rem;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+      padding-right: 2rem;
+    }
+
+    .admin-modal-meta {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .rsvp-list-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .rsvp-list-item:last-child { border-bottom: none; }
+
+    .rsvp-list-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .rsvp-list-email {
+      font-size: 0.825rem;
+      color: var(--text-light);
+      margin-top: 0.15rem;
+    }
+
+    .rsvp-list-email a { color: var(--crimson); text-decoration: none; }
+    .rsvp-list-email a:hover { text-decoration: underline; }
+
+    .rsvp-list-comments {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--cream);
+      border-radius: 4px;
+    }
+
+    .rsvp-list-time {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-top: 0.3rem;
+    }
+
     .checkbox-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -525,6 +633,12 @@
             <textarea id="eventDescription" placeholder="Brief description of the event"></textarea>
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Posted By (your name — admin only)</label>
+            <input type="text" id="eventPostedBy" placeholder="e.g. Mrs. Newberry">
+          </div>
+        </div>
         <div class="form-actions">
           <button class="btn btn-save" id="saveEventBtn">Save Event</button>
           <button class="btn btn-cancel" id="cancelEventBtn">Cancel</button>
@@ -585,6 +699,12 @@
             <div class="form-group full">
               <label>Link / Application URL (optional)</label>
               <input type="url" id="oppLink" placeholder="e.g. https://www.aicpa.org/scholarships">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Posted By (admin only)</label>
+              <input type="text" id="oppPostedBy" placeholder="Your name">
             </div>
           </div>
           <div class="form-actions">
@@ -687,6 +807,10 @@
                 <option value="false">No</option>
               </select>
             </div>
+            <div class="form-group">
+              <label>Posted By (admin only)</label>
+              <input type="text" id="firmPostedBy" placeholder="Your name">
+            </div>
           </div>
           <div class="form-actions">
             <button class="btn btn-save" id="saveFirmBtn">Save Firm</button>
@@ -700,6 +824,16 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <!-- RSVP Viewer Modal -->
+  <div class="admin-modal" id="rsvpViewerModal" onclick="if(event.target === this) closeRsvpViewer()">
+    <div class="admin-modal-dialog">
+      <button class="admin-modal-close" onclick="closeRsvpViewer()">&times;</button>
+      <h3 id="rsvpViewerTitle">RSVPs</h3>
+      <p class="admin-modal-meta" id="rsvpViewerMeta"></p>
+      <div id="rsvpViewerList"></div>
+    </div>
+  </div>
 
   <script>
     const FIREBASE_DB_URL = 'https://samford-bap-default-rtdb.firebaseio.com';
@@ -773,6 +907,7 @@
       document.getElementById('eventCategory').value = 'professional';
       document.getElementById('eventLocation').value = '';
       document.getElementById('eventDescription').value = '';
+      document.getElementById('eventPostedBy').value = localStorage.getItem('bap_admin_name') || '';
       eventForm.classList.add('visible');
       document.getElementById('eventTitle').focus();
     });
@@ -787,6 +922,7 @@
       const category = document.getElementById('eventCategory').value;
       const location = document.getElementById('eventLocation').value.trim();
       const description = document.getElementById('eventDescription').value.trim();
+      const postedBy = document.getElementById('eventPostedBy').value.trim();
       const editId = document.getElementById('editId').value;
 
       if (!title || !date) {
@@ -794,7 +930,9 @@
         return;
       }
 
-      const eventData = { title, date, category, location, description };
+      if (postedBy) localStorage.setItem('bap_admin_name', postedBy);
+
+      const eventData = { title, date, category, location, description, postedBy, updatedAt: Date.now() };
 
       try {
         if (editId) {
@@ -840,13 +978,16 @@
           const d = new Date(ev.date + 'T00:00:00');
           const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           const cat = (ev.category || 'social').toLowerCase();
+          const postedByHtml = ev.postedBy ? `<div class="event-list-posted-by">Posted by ${escapeHtml(ev.postedBy)}</div>` : '';
           return `<div class="event-list-item">
             <div class="event-list-info">
               <h4>${escapeHtml(ev.title)}</h4>
               <span class="event-list-meta">${dateStr}${ev.location ? ' &middot; ' + escapeHtml(ev.location) : ''}</span>
+              ${postedByHtml}
             </div>
             <span class="event-list-tag ${cat}">${cat}</span>
             <div class="event-list-actions">
+              <button class="btn btn-rsvp" onclick="viewRsvps('${ev.id}', '${escapeHtml(ev.title)}', '${dateStr}')">RSVPs</button>
               <button class="btn btn-edit" onclick="editEvent('${ev.id}')">Edit</button>
               <button class="btn btn-delete" onclick="deleteEvent('${ev.id}', '${escapeHtml(ev.title)}')">Delete</button>
             </div>
@@ -876,6 +1017,7 @@
         document.getElementById('eventCategory').value = ev.category || 'professional';
         document.getElementById('eventLocation').value = ev.location || '';
         document.getElementById('eventDescription').value = ev.description || '';
+        document.getElementById('eventPostedBy').value = ev.postedBy || localStorage.getItem('bap_admin_name') || '';
         eventForm.classList.add('visible');
         document.getElementById('eventTitle').focus();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -941,6 +1083,7 @@
       setSelectedSpecialties([]);
       document.getElementById('firmWebsite').value = '';
       document.getElementById('firmHiring').value = 'false';
+      document.getElementById('firmPostedBy').value = localStorage.getItem('bap_admin_name') || '';
       firmForm.classList.add('visible');
       document.getElementById('firmName').focus();
     });
@@ -958,6 +1101,7 @@
       const specialties = getSelectedSpecialties();
       const website = document.getElementById('firmWebsite').value.trim();
       const hiring = document.getElementById('firmHiring').value === 'true';
+      const postedBy = document.getElementById('firmPostedBy').value.trim();
       const editId = document.getElementById('firmEditId').value;
 
       if (!name) {
@@ -965,7 +1109,9 @@
         return;
       }
 
-      const firmData = { name, type, location, size, description, specialties, website, hiring };
+      if (postedBy) localStorage.setItem('bap_admin_name', postedBy);
+
+      const firmData = { name, type, location, size, description, specialties, website, hiring, postedBy, updatedAt: Date.now() };
 
       try {
         if (editId) {
@@ -1011,11 +1157,13 @@
           const sizeStr = firm.size ? (firm.size >= 1000 ? Math.round(firm.size/1000) + 'k' : firm.size) + ' emp.' : '';
           const specs = Array.isArray(firm.specialties) ? firm.specialties.join(', ') : '';
           const meta = [firm.type, firm.location, sizeStr].filter(Boolean).join(' &middot; ');
+          const postedByHtml = firm.postedBy ? `<div class="event-list-posted-by">Posted by ${escapeHtml(firm.postedBy)}</div>` : '';
           return `<div class="event-list-item">
             <div class="event-list-info">
               <h4>${escapeHtml(firm.name)}${hiringBadge}</h4>
               <span class="event-list-meta">${meta}</span>
               ${specs ? '<br><span class="event-list-meta" style="font-size:0.75rem;">' + escapeHtml(specs) + '</span>' : ''}
+              ${postedByHtml}
             </div>
             <div class="event-list-actions">
               <button class="btn btn-edit" onclick="editFirm('${firm.id}')">Edit</button>
@@ -1044,6 +1192,7 @@
         setSelectedSpecialties(firm.specialties || []);
         document.getElementById('firmWebsite').value = firm.website || '';
         document.getElementById('firmHiring').value = firm.hiring ? 'true' : 'false';
+        document.getElementById('firmPostedBy').value = firm.postedBy || localStorage.getItem('bap_admin_name') || '';
         firmForm.classList.add('visible');
         document.getElementById('firmName').focus();
       } catch (err) {
@@ -1078,6 +1227,7 @@
       document.getElementById('oppAmount').value = '';
       document.getElementById('oppDescription').value = '';
       document.getElementById('oppLink').value = '';
+      document.getElementById('oppPostedBy').value = localStorage.getItem('bap_admin_name') || '';
       oppForm.classList.add('visible');
       document.getElementById('oppTitle').focus();
     });
@@ -1094,6 +1244,7 @@
       const amount = document.getElementById('oppAmount').value.trim();
       const description = document.getElementById('oppDescription').value.trim();
       const link = document.getElementById('oppLink').value.trim();
+      const postedBy = document.getElementById('oppPostedBy').value.trim();
       const editId = document.getElementById('oppEditId').value;
 
       if (!title) {
@@ -1101,7 +1252,9 @@
         return;
       }
 
-      const oppData = { title, type, deadline, organization, amount, description, link };
+      if (postedBy) localStorage.setItem('bap_admin_name', postedBy);
+
+      const oppData = { title, type, deadline, organization, amount, description, link, postedBy, updatedAt: Date.now() };
 
       try {
         if (editId) {
@@ -1155,10 +1308,12 @@
             dateStr = ' &middot; Deadline ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           }
           const meta = [opp.organization, opp.amount].filter(Boolean).join(' &middot; ');
+          const postedByHtml = opp.postedBy ? `<div class="event-list-posted-by">Posted by ${escapeHtml(opp.postedBy)}</div>` : '';
           return `<div class="event-list-item">
             <div class="event-list-info">
               <h4>${escapeHtml(opp.title)}</h4>
               <span class="event-list-meta">${escapeHtml(meta)}${dateStr}</span>
+              ${postedByHtml}
             </div>
             <span class="event-list-tag" style="background:rgba(196,163,90,0.15);color:#8B7332;">${type}</span>
             <div class="event-list-actions">
@@ -1187,6 +1342,7 @@
         document.getElementById('oppAmount').value = opp.amount || '';
         document.getElementById('oppDescription').value = opp.description || '';
         document.getElementById('oppLink').value = opp.link || '';
+        document.getElementById('oppPostedBy').value = opp.postedBy || localStorage.getItem('bap_admin_name') || '';
         oppForm.classList.add('visible');
         document.getElementById('oppTitle').focus();
       } catch (err) {
@@ -1203,6 +1359,48 @@
       } catch (err) {
         showToast('Error deleting opportunity.');
       }
+    }
+
+    // ── RSVP Viewer ──
+    async function viewRsvps(eventId, title, dateStr) {
+      document.getElementById('rsvpViewerTitle').textContent = title;
+      document.getElementById('rsvpViewerMeta').textContent = dateStr;
+      document.getElementById('rsvpViewerList').innerHTML = '<div class="empty-state">Loading...</div>';
+      document.getElementById('rsvpViewerModal').classList.add('open');
+
+      try {
+        const res = await fetch(FIREBASE_DB_URL + '/rsvps/' + eventId + '.json');
+        const data = await res.json();
+        const listEl = document.getElementById('rsvpViewerList');
+
+        if (!data) {
+          listEl.innerHTML = '<div class="empty-state">No RSVPs yet for this event.</div>';
+          return;
+        }
+
+        const rsvps = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        rsvps.sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+
+        document.getElementById('rsvpViewerMeta').textContent = dateStr + ' &middot; ' + rsvps.length + ' RSVP' + (rsvps.length === 1 ? '' : 's');
+
+        listEl.innerHTML = rsvps.map(r => {
+          const when = r.submittedAt ? new Date(r.submittedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+          const emailHtml = r.email ? `<div class="rsvp-list-email"><a href="mailto:${escapeHtml(r.email)}">${escapeHtml(r.email)}</a></div>` : '';
+          const commentsHtml = r.comments ? `<div class="rsvp-list-comments">${escapeHtml(r.comments)}</div>` : '';
+          return `<div class="rsvp-list-item">
+            <div class="rsvp-list-name">${escapeHtml(r.name || 'Anonymous')}</div>
+            ${emailHtml}
+            ${commentsHtml}
+            <div class="rsvp-list-time">${when}</div>
+          </div>`;
+        }).join('');
+      } catch (err) {
+        document.getElementById('rsvpViewerList').innerHTML = '<div class="empty-state">Error loading RSVPs.</div>';
+      }
+    }
+
+    function closeRsvpViewer() {
+      document.getElementById('rsvpViewerModal').classList.remove('open');
     }
   </script>
 
