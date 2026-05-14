@@ -167,6 +167,88 @@
       margin-bottom: 3rem;
     }
 
+    /* ── Collapsible Public Sections ── */
+    .section-collapse {
+      width: 100%;
+    }
+
+    .section-collapse > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 0.5rem 0;
+      transition: opacity 0.2s;
+      user-select: none;
+    }
+
+    .section-collapse > summary::-webkit-details-marker { display: none; }
+    .section-collapse > summary:hover { opacity: 0.85; }
+
+    .section-collapse-header-text {
+      flex: 1;
+    }
+
+    .section-collapse-header-text .section-label,
+    .section-collapse-header-text .section-title {
+      margin-bottom: 0;
+    }
+
+    .section-collapse-header-text .section-title {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .section-count {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-light);
+      letter-spacing: 0;
+    }
+
+    .section-collapse-chevron {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-size: 0.9rem;
+      transition: transform 0.25s ease, background 0.2s, color 0.2s;
+      flex-shrink: 0;
+      margin-top: 1.25rem;
+    }
+
+    .section-collapse > summary:hover .section-collapse-chevron {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .section-collapse[open] > summary .section-collapse-chevron {
+      transform: rotate(180deg);
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .section-collapse-body {
+      padding-top: 2rem;
+    }
+
+    .section-collapse-body .section-intro {
+      margin-bottom: 2.5rem;
+    }
+
     /* ── Hero ── */
     .hero {
       min-height: 100vh;
@@ -1459,25 +1541,34 @@
   <!-- Events -->
   <section class="events" id="events">
     <div class="container">
-      <p class="section-label fade-in">What's Coming Up</p>
-      <h2 class="section-title fade-in">Upcoming Events</h2>
-      <p class="section-intro fade-in">From networking nights to technical workshops, there's always something happening. All events are open to current members.</p>
+      <details class="section-collapse fade-in">
+        <summary>
+          <div class="section-collapse-header-text">
+            <p class="section-label">What's Coming Up</p>
+            <h2 class="section-title">Upcoming Events <span class="section-count" id="eventsCount"></span></h2>
+          </div>
+          <span class="section-collapse-chevron">▼</span>
+        </summary>
+        <div class="section-collapse-body">
+          <p class="section-intro">From networking nights to technical workshops, there's always something happening. All events are open to current members.</p>
 
-      <div class="event-filters fade-in">
-        <button class="event-filter active" data-filter="all">All Events</button>
-        <button class="event-filter" data-filter="professional">Professional</button>
-        <button class="event-filter" data-filter="technical">Technical</button>
-        <button class="event-filter" data-filter="service">Service</button>
-        <button class="event-filter" data-filter="social">Social</button>
-      </div>
+          <div class="event-filters">
+            <button class="event-filter active" data-filter="all">All Events</button>
+            <button class="event-filter" data-filter="professional">Professional</button>
+            <button class="event-filter" data-filter="technical">Technical</button>
+            <button class="event-filter" data-filter="service">Service</button>
+            <button class="event-filter" data-filter="social">Social</button>
+          </div>
 
-      <div class="events-grid" id="eventsGrid">
-        <p style="color: var(--text-light); font-size: 0.95rem;">Loading events...</p>
-      </div>
+          <div class="events-grid" id="eventsGrid">
+            <p style="color: var(--text-light); font-size: 0.95rem;">Loading events...</p>
+          </div>
 
-      <div class="past-events-toggle fade-in">
-        <button id="togglePastEvents">Show past events</button>
-      </div>
+          <div class="past-events-toggle">
+            <button id="togglePastEvents">Show past events</button>
+          </div>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -1566,11 +1657,18 @@
   <!-- Firms -->
   <section class="firms" id="firms">
     <div class="container">
-      <p class="section-label fade-in">Local Opportunities</p>
-      <h2 class="section-title fade-in">Accounting Firms</h2>
-      <p class="section-intro fade-in">Local and regional firms that recruit from Samford. Check back for updated hiring info and opportunities.</p>
+      <details class="section-collapse fade-in">
+        <summary>
+          <div class="section-collapse-header-text">
+            <p class="section-label">Local Opportunities</p>
+            <h2 class="section-title">Accounting Firms <span class="section-count" id="firmsCount"></span></h2>
+          </div>
+          <span class="section-collapse-chevron">▼</span>
+        </summary>
+        <div class="section-collapse-body">
+          <p class="section-intro">Local and regional firms that recruit from Samford. Check back for updated hiring info and opportunities.</p>
 
-      <div class="firm-filters fade-in" id="firmFilters">
+          <div class="firm-filters" id="firmFilters">
         <div class="firm-filter-row">
           <span class="firm-filter-label">Type</span>
           <button class="firm-pill active" data-filter-type="all">All</button>
@@ -1605,30 +1703,41 @@
         </div>
       </div>
 
-      <div class="firms-grid" id="firmsGrid">
-        <p style="color: var(--text-light); font-size: 0.95rem;">Loading firms...</p>
-      </div>
+          <div class="firms-grid" id="firmsGrid">
+            <p style="color: var(--text-light); font-size: 0.95rem;">Loading firms...</p>
+          </div>
+        </div>
+      </details>
     </div>
   </section>
 
   <!-- Opportunities -->
   <section class="opportunities" id="opportunities">
     <div class="container">
-      <p class="section-label fade-in">Beyond the Classroom</p>
-      <h2 class="section-title fade-in">Scholarships & Opportunities</h2>
-      <p class="section-intro fade-in">Scholarships, research positions, and conferences open to BAP members. Check back often — new opportunities are added throughout the year.</p>
+      <details class="section-collapse fade-in">
+        <summary>
+          <div class="section-collapse-header-text">
+            <p class="section-label">Beyond the Classroom</p>
+            <h2 class="section-title">Scholarships & Opportunities <span class="section-count" id="oppsCount"></span></h2>
+          </div>
+          <span class="section-collapse-chevron">▼</span>
+        </summary>
+        <div class="section-collapse-body">
+          <p class="section-intro">Scholarships, research positions, and conferences open to BAP members. Check back often — new opportunities are added throughout the year.</p>
 
-      <div class="opportunity-filters fade-in">
-        <button class="opportunity-filter active" data-filter="all">All</button>
-        <button class="opportunity-filter" data-filter="scholarship">Scholarships</button>
-        <button class="opportunity-filter" data-filter="research">Research</button>
-        <button class="opportunity-filter" data-filter="conference">Conferences</button>
-        <button class="opportunity-filter" data-filter="internship">Internships</button>
-      </div>
+          <div class="opportunity-filters">
+            <button class="opportunity-filter active" data-filter="all">All</button>
+            <button class="opportunity-filter" data-filter="scholarship">Scholarships</button>
+            <button class="opportunity-filter" data-filter="research">Research</button>
+            <button class="opportunity-filter" data-filter="conference">Conferences</button>
+            <button class="opportunity-filter" data-filter="internship">Internships</button>
+          </div>
 
-      <div class="opportunities-grid" id="opportunitiesGrid">
-        <p style="color: var(--text-light); font-size: 0.95rem;">Loading opportunities...</p>
-      </div>
+          <div class="opportunities-grid" id="opportunitiesGrid">
+            <p style="color: var(--text-light); font-size: 0.95rem;">Loading opportunities...</p>
+          </div>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -1870,9 +1979,16 @@
       return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
+    function updateEventsCount() {
+      const upcomingCount = allEvents.filter(ev => !isPastEvent(ev)).length;
+      const el = document.getElementById('eventsCount');
+      if (el) el.textContent = upcomingCount === 0 ? '(none scheduled)' : '(' + upcomingCount + ' upcoming)';
+    }
+
     function renderEvents() {
       const grid = document.getElementById('eventsGrid');
       const filtered = showPastEvents ? allEvents : allEvents.filter(ev => !isPastEvent(ev));
+      updateEventsCount();
 
       if (!filtered || filtered.length === 0) {
         grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">No upcoming events — check back soon!</p>';
@@ -2007,8 +2123,14 @@
       return size + '+ employees';
     }
 
+    function updateFirmsCount() {
+      const el = document.getElementById('firmsCount');
+      if (el) el.textContent = allFirms.length === 0 ? '' : '(' + allFirms.length + ')';
+    }
+
     function renderFirmCards(firms) {
       const grid = document.getElementById('firmsGrid');
+      updateFirmsCount();
       if (!firms || firms.length === 0) {
         grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem; grid-column: 1/-1;">No firms match your filters. Try broadening your search.</p>';
         return;
@@ -2123,8 +2245,15 @@
       return new Date(opp.deadline + 'T00:00:00') < today;
     }
 
+    function updateOppsCount() {
+      const active = allOpportunities.filter(o => !isOpportunityExpired(o)).length;
+      const el = document.getElementById('oppsCount');
+      if (el) el.textContent = active === 0 ? '(none right now)' : '(' + active + ' open)';
+    }
+
     function renderOpportunities() {
       const grid = document.getElementById('opportunitiesGrid');
+      updateOppsCount();
       let filtered = allOpportunities.filter(o => !isOpportunityExpired(o));
       if (activeOppFilter !== 'all') {
         filtered = filtered.filter(o => (o.type || '').toLowerCase() === activeOppFilter);
