@@ -204,6 +204,80 @@
       color: var(--text-primary);
     }
 
+    /* Collapsible Sections */
+    .admin-section {
+      margin-bottom: 1rem;
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .admin-section > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: background 0.15s;
+      user-select: none;
+    }
+
+    .admin-section > summary:hover { background: rgba(0,0,0,0.02); }
+
+    .admin-section > summary::-webkit-details-marker { display: none; }
+
+    .admin-section[open] > summary {
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .admin-section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .admin-section-count {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .admin-section-chevron {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      transition: transform 0.2s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .admin-section[open] > summary .admin-section-chevron {
+      transform: rotate(180deg);
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .admin-section-body {
+      padding: 1.5rem;
+    }
+
+    .admin-section-add-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1.25rem;
+    }
+
     .event-count {
       font-size: 0.85rem;
       color: var(--text-light);
@@ -593,60 +667,58 @@
     <div class="admin-body">
 
       <!-- Site Settings -->
-      <div class="admin-toolbar">
-        <h2>Site Settings</h2>
-        <button class="btn btn-cancel" id="toggleSettingsBtn">Show</button>
-      </div>
-      <div class="event-form" id="settingsForm">
-        <div class="form-row">
-          <div class="form-group full">
-            <label>Announcement Banner Text</label>
-            <textarea id="settingsAnnouncement" placeholder="e.g. Meeting moved to Friday this week — see you at 5 PM in Brock 230!"></textarea>
+      <details class="admin-section" id="settingsSection">
+        <summary>
+          <span class="admin-section-title">Site Settings</span>
+          <span class="admin-section-chevron">▼</span>
+        </summary>
+        <div class="admin-section-body">
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Announcement Banner Text</label>
+              <textarea id="settingsAnnouncement" placeholder="e.g. Meeting moved to Friday this week — see you at 5 PM in Brock 230!"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Banner Active</label>
+              <select id="settingsAnnouncementActive">
+                <option value="false">Off — hide banner</option>
+                <option value="true">On — show on homepage</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Show Today's Events Automatically</label>
+              <select id="settingsAutoToday">
+                <option value="true">Yes — show events happening today</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Hero Background Image URL (optional)</label>
+              <input type="url" id="settingsHeroImage" placeholder="e.g. https://i.imgur.com/your-image.jpg">
+              <span style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.3rem;">Tip: Upload a photo to imgur.com or similar, copy the direct image link, and paste here.</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-save" id="saveSettingsBtn">Save Settings</button>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Banner Active</label>
-            <select id="settingsAnnouncementActive">
-              <option value="false">Off — hide banner</option>
-              <option value="true">On — show on homepage</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Show Today's Events Automatically</label>
-            <select id="settingsAutoToday">
-              <option value="true">Yes — show events happening today</option>
-              <option value="false">No</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group full">
-            <label>Hero Background Image URL (optional)</label>
-            <input type="url" id="settingsHeroImage" placeholder="e.g. https://i.imgur.com/your-image.jpg">
-            <span style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.3rem;">Tip: Upload a photo to imgur.com or similar, copy the direct image link, and paste here.</span>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-save" id="saveSettingsBtn">Save Settings</button>
-          <button class="btn btn-cancel" id="cancelSettingsBtn">Hide Panel</button>
-        </div>
-      </div>
+      </details>
 
-      <!-- Archive Button -->
-      <div style="background: rgba(196,163,90,0.08); border: 1px solid rgba(196,163,90,0.2); border-radius: 8px; padding: 1rem 1.5rem; margin: 1rem 0 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-        <div style="font-size: 0.875rem; color: var(--text-secondary);">
-          <strong>Archive old entries:</strong> moves events, opportunities, and firms older than 2 years to an archive.
-        </div>
-        <button class="btn btn-cancel" id="archiveOldBtn">Archive Old Entries</button>
-      </div>
+      <details class="admin-section" id="eventsSection">
+        <summary>
+          <span class="admin-section-title">Events <span class="admin-section-count" id="eventCount"></span></span>
+          <span class="admin-section-chevron">▼</span>
+        </summary>
+        <div class="admin-section-body">
+          <div class="admin-section-add-row">
+            <button class="btn btn-add" id="addEventBtn">+ Add Event</button>
+          </div>
 
-      <div class="admin-toolbar">
-        <h2>Events <span class="event-count" id="eventCount"></span></h2>
-        <button class="btn btn-add" id="addEventBtn">+ Add Event</button>
-      </div>
-
-      <!-- Add/Edit Form -->
+          <!-- Add/Edit Form -->
       <div class="event-form" id="eventForm">
         <h3 id="formTitle">Add New Event</h3>
         <input type="hidden" id="editId">
@@ -701,17 +773,23 @@
         </div>
       </div>
 
-      <!-- Event List -->
-      <div id="eventList"></div>
+          <!-- Event List -->
+          <div id="eventList"></div>
+        </div>
+      </details>
 
       <!-- Opportunities Section -->
-      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(0,0,0,0.06);">
-        <div class="admin-toolbar">
-          <h2>Opportunities <span class="event-count" id="oppCount"></span></h2>
-          <button class="btn btn-add" id="addOppBtn">+ Add Opportunity</button>
-        </div>
+      <details class="admin-section" id="opportunitiesSection">
+        <summary>
+          <span class="admin-section-title">Opportunities <span class="admin-section-count" id="oppCount"></span></span>
+          <span class="admin-section-chevron">▼</span>
+        </summary>
+        <div class="admin-section-body">
+          <div class="admin-section-add-row">
+            <button class="btn btn-add" id="addOppBtn">+ Add Opportunity</button>
+          </div>
 
-        <div class="event-form" id="oppForm">
+          <div class="event-form" id="oppForm">
           <h3 id="oppFormTitle">Add New Opportunity</h3>
           <input type="hidden" id="oppEditId">
           <div class="form-row">
@@ -769,17 +847,22 @@
           </div>
         </div>
 
-        <div id="oppList"></div>
-      </div>
+          <div id="oppList"></div>
+        </div>
+      </details>
 
       <!-- Firms Section -->
-      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid rgba(0,0,0,0.06);">
-        <div class="admin-toolbar">
-          <h2>Firms <span class="event-count" id="firmCount"></span></h2>
-          <button class="btn btn-add" id="addFirmBtn">+ Add Firm</button>
-        </div>
+      <details class="admin-section" id="firmsSection">
+        <summary>
+          <span class="admin-section-title">Firms <span class="admin-section-count" id="firmCount"></span></span>
+          <span class="admin-section-chevron">▼</span>
+        </summary>
+        <div class="admin-section-body">
+          <div class="admin-section-add-row">
+            <button class="btn btn-add" id="addFirmBtn">+ Add Firm</button>
+          </div>
 
-        <div class="event-form" id="firmForm">
+          <div class="event-form" id="firmForm">
           <h3 id="firmFormTitle">Add New Firm</h3>
           <input type="hidden" id="firmEditId">
           <div class="form-row">
@@ -874,7 +957,16 @@
           </div>
         </div>
 
-        <div id="firmList"></div>
+          <div id="firmList"></div>
+        </div>
+      </details>
+
+      <!-- Archive Button (out of the way at bottom) -->
+      <div style="background: rgba(196,163,90,0.06); border: 1px solid rgba(196,163,90,0.15); border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="font-size: 0.8rem; color: var(--text-light);">
+          <strong style="color: var(--text-secondary);">Archive old entries</strong> — moves items older than 2 years to an archive (not deleted).
+        </div>
+        <button class="btn btn-cancel" id="archiveOldBtn" style="font-size: 0.8rem;">Archive Old</button>
       </div>
     </div>
   </div>
@@ -1523,18 +1615,8 @@
     }
 
     // ── Site Settings ──
-    const settingsForm = document.getElementById('settingsForm');
-    const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
-
-    toggleSettingsBtn.addEventListener('click', () => {
-      const isOpen = settingsForm.classList.toggle('visible');
-      toggleSettingsBtn.textContent = isOpen ? 'Hide' : 'Show';
-      if (isOpen) loadSettings();
-    });
-
-    document.getElementById('cancelSettingsBtn').addEventListener('click', () => {
-      settingsForm.classList.remove('visible');
-      toggleSettingsBtn.textContent = 'Show';
+    document.getElementById('settingsSection').addEventListener('toggle', (e) => {
+      if (e.target.open) loadSettings();
     });
 
     async function loadSettings() {
