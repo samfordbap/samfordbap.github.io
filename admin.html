@@ -961,13 +961,6 @@
         </div>
       </details>
 
-      <!-- Archive Button (out of the way at bottom) -->
-      <div style="background: rgba(196,163,90,0.06); border: 1px solid rgba(196,163,90,0.15); border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-        <div style="font-size: 0.8rem; color: var(--text-light);">
-          <strong style="color: var(--text-secondary);">Archive old entries</strong> — moves items older than 2 years to an archive (not deleted).
-        </div>
-        <button class="btn btn-cancel" id="archiveOldBtn" style="font-size: 0.8rem;">Archive Old</button>
-      </div>
     </div>
   </div>
 
@@ -1024,6 +1017,7 @@
       loadEvents();
       loadFirms();
       loadOpportunities();
+      autoArchiveOldEntries();
     }
 
     async function attemptLogin() {
@@ -1035,6 +1029,7 @@
         loadEvents();
         loadFirms();
         loadOpportunities();
+        autoArchiveOldEntries();
       } else {
         loginError.style.display = 'block';
         passwordInput.value = '';
@@ -1651,16 +1646,17 @@
       }
     });
 
-    // ── Archive Old Entries ──
-    document.getElementById('archiveOldBtn').addEventListener('click', async () => {
-      if (!confirm('Archive all entries older than 2 years? They will be moved to an archive (not deleted) but won\'t appear in the main list.')) return;
+    // ── Auto-Archive Old Entries (runs once per day on login) ──
+    async function autoArchiveOldEntries() {
+      const ONE_DAY = 24 * 60 * 60 * 1000;
+      const lastRun = parseInt(localStorage.getItem('bap_archive_last_run') || '0');
+      if (Date.now() - lastRun < ONE_DAY) return;
 
       const twoYearsAgo = new Date();
       twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
       let archivedCount = 0;
 
       try {
-        // Archive events with date older than 2 years
         const eventsRes = await fetch(FIREBASE_DB_URL + '/events.json');
         const events = await eventsRes.json() || {};
         for (const [id, ev] of Object.entries(events)) {
@@ -1673,7 +1669,6 @@
           }
         }
 
-        // Archive opportunities with deadline older than 2 years
         const oppsRes = await fetch(FIREBASE_DB_URL + '/opportunities.json');
         const opps = await oppsRes.json() || {};
         for (const [id, opp] of Object.entries(opps)) {
@@ -1686,13 +1681,17 @@
           }
         }
 
-        showToast('Archived ' + archivedCount + ' entries.');
-        loadEvents();
-        loadOpportunities();
+        localStorage.setItem('bap_archive_last_run', Date.now().toString());
+
+        if (archivedCount > 0) {
+          showToast('Auto-archived ' + archivedCount + ' old ' + (archivedCount === 1 ? 'entry' : 'entries') + '.');
+          loadEvents();
+          loadOpportunities();
+        }
       } catch (err) {
-        showToast('Error archiving entries.');
+        // Silent fail — don't bother the user
       }
-    });
+    }
 
     // ── Time formatting helper ──
     function formatTime12(timeStr) {
