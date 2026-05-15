@@ -457,28 +457,39 @@
 
     .event-filters {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.75rem;
       margin-bottom: 2.5rem;
       flex-wrap: wrap;
+      align-items: center;
     }
 
-    .event-filter {
-      padding: 0.5rem 1.25rem;
+    .filter-dropdown {
+      appearance: none;
+      -webkit-appearance: none;
+      padding: 0.55rem 2.25rem 0.55rem 1rem;
       font-size: 0.825rem;
       font-weight: 500;
+      font-family: var(--sans);
       border: 1px solid rgba(0,0,0,0.12);
       border-radius: 100px;
-      background: var(--white);
-      color: var(--text-secondary);
+      background-color: var(--white);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%231B2A4A' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      color: var(--text-primary);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      min-width: 140px;
     }
 
-    .event-filter:hover,
-    .event-filter.active {
-      background: var(--navy);
-      color: var(--white);
+    .filter-dropdown:hover {
       border-color: var(--navy);
+    }
+
+    .filter-dropdown:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(27,42,74,0.08);
     }
 
     .events-grid {
@@ -605,8 +616,17 @@
       font-style: italic;
     }
 
-    .event-card.past {
+    .event-card.past,
+    .opportunity-card.past {
       opacity: 0.65;
+      border-style: dashed;
+      border-color: rgba(0,0,0,0.25);
+      background: transparent;
+    }
+
+    .event-card.past:hover,
+    .opportunity-card.past:hover {
+      opacity: 0.85;
     }
 
     .past-events-toggle {
@@ -1553,11 +1573,13 @@
           <p class="section-intro">From networking nights to technical workshops, there's always something happening. All events are open to current members.</p>
 
           <div class="event-filters">
-            <button class="event-filter active" data-filter="all">All Events</button>
-            <button class="event-filter" data-filter="professional">Professional</button>
-            <button class="event-filter" data-filter="technical">Technical</button>
-            <button class="event-filter" data-filter="service">Service</button>
-            <button class="event-filter" data-filter="social">Social</button>
+            <select class="filter-dropdown" id="eventFilterSelect">
+              <option value="all">All Categories</option>
+              <option value="professional">Professional</option>
+              <option value="technical">Technical</option>
+              <option value="service">Service</option>
+              <option value="social">Social</option>
+            </select>
           </div>
 
           <div class="events-grid" id="eventsGrid">
@@ -1669,39 +1691,37 @@
           <p class="section-intro">Local and regional firms that recruit from Samford. Check back for updated hiring info and opportunities.</p>
 
           <div class="firm-filters" id="firmFilters">
-        <div class="firm-filter-row">
-          <span class="firm-filter-label">Type</span>
-          <button class="firm-pill active" data-filter-type="all">All</button>
-          <button class="firm-pill" data-filter-type="Big 4">Big 4</button>
-          <button class="firm-pill" data-filter-type="National">National</button>
-          <button class="firm-pill" data-filter-type="Regional">Regional</button>
-          <button class="firm-pill" data-filter-type="Local">Local</button>
-          <button class="firm-pill" data-filter-type="Industry">Industry</button>
-          <button class="firm-pill" data-filter-type="Government">Government</button>
-        </div>
-        <div class="firm-filter-row">
-          <span class="firm-filter-label">Specialty</span>
-          <button class="firm-pill active" data-filter-spec="all">All</button>
-          <button class="firm-pill" data-filter-spec="Audit">Audit</button>
-          <button class="firm-pill" data-filter-spec="Tax">Tax</button>
-          <button class="firm-pill" data-filter-spec="Advisory">Advisory</button>
-          <button class="firm-pill" data-filter-spec="Consulting">Consulting</button>
-          <button class="firm-pill" data-filter-spec="Forensic Accounting">Forensic</button>
-          <button class="firm-pill" data-filter-spec="Governmental">Governmental</button>
-          <button class="firm-pill" data-filter-spec="Technology">Technology</button>
-          <button class="firm-pill" data-filter-spec="Wealth Management">Wealth Mgmt</button>
-        </div>
-        <div class="firm-filter-row">
-          <span class="firm-filter-label">Hiring</span>
-          <button class="firm-pill active" data-filter-hiring="all">All</button>
-          <button class="firm-pill" data-filter-hiring="yes">Hiring Now</button>
-          <span class="firm-filter-label" style="margin-left: 1.5rem;">Sort</span>
-          <button class="firm-pill active" data-sort="name">Name</button>
-          <button class="firm-pill" data-sort="size-desc">Largest</button>
-          <button class="firm-pill" data-sort="size-asc">Smallest</button>
-          <button class="firm-pill" data-sort="type">Type</button>
-        </div>
-      </div>
+            <select class="filter-dropdown" id="firmFilterType">
+              <option value="all">All Types</option>
+              <option value="Big 4">Big 4</option>
+              <option value="National">National</option>
+              <option value="Regional">Regional</option>
+              <option value="Local">Local</option>
+              <option value="Industry">Industry</option>
+              <option value="Government">Government</option>
+            </select>
+            <select class="filter-dropdown" id="firmFilterSpec">
+              <option value="all">All Specialties</option>
+              <option value="Audit">Audit</option>
+              <option value="Tax">Tax</option>
+              <option value="Advisory">Advisory</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Forensic Accounting">Forensic Accounting</option>
+              <option value="Governmental">Governmental</option>
+              <option value="Technology">Technology</option>
+              <option value="Wealth Management">Wealth Management</option>
+            </select>
+            <select class="filter-dropdown" id="firmFilterHiring">
+              <option value="all">All Hiring Status</option>
+              <option value="yes">Hiring Now</option>
+            </select>
+            <select class="filter-dropdown" id="firmSort">
+              <option value="name">Sort: Name</option>
+              <option value="size-desc">Sort: Largest</option>
+              <option value="size-asc">Sort: Smallest</option>
+              <option value="type">Sort: Type</option>
+            </select>
+          </div>
 
           <div class="firms-grid" id="firmsGrid">
             <p style="color: var(--text-light); font-size: 0.95rem;">Loading firms...</p>
@@ -1725,16 +1745,22 @@
         <div class="section-collapse-body">
           <p class="section-intro">Scholarships, research positions, and conferences open to BAP members. Check back often — new opportunities are added throughout the year.</p>
 
-          <div class="opportunity-filters">
-            <button class="opportunity-filter active" data-filter="all">All</button>
-            <button class="opportunity-filter" data-filter="scholarship">Scholarships</button>
-            <button class="opportunity-filter" data-filter="research">Research</button>
-            <button class="opportunity-filter" data-filter="conference">Conferences</button>
-            <button class="opportunity-filter" data-filter="internship">Internships</button>
+          <div class="opportunity-filters" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-bottom: 2rem;">
+            <select class="filter-dropdown" id="opportunityFilterSelect">
+              <option value="all">All Types</option>
+              <option value="scholarship">Scholarships</option>
+              <option value="research">Research</option>
+              <option value="conference">Conferences</option>
+              <option value="internship">Internships</option>
+            </select>
           </div>
 
           <div class="opportunities-grid" id="opportunitiesGrid">
             <p style="color: var(--text-light); font-size: 0.95rem;">Loading opportunities...</p>
+          </div>
+
+          <div class="past-events-toggle">
+            <button id="togglePastOpps">Show past opportunities</button>
           </div>
         </div>
       </details>
@@ -2053,14 +2079,10 @@
       });
     }
 
-    // Event filters
-    document.querySelectorAll('.event-filter').forEach(filter => {
-      filter.addEventListener('click', () => {
-        document.querySelectorAll('.event-filter').forEach(f => f.classList.remove('active'));
-        filter.classList.add('active');
-        activeFilter = filter.dataset.filter;
-        applyFilter();
-      });
+    // Event filter dropdown
+    document.getElementById('eventFilterSelect').addEventListener('change', (e) => {
+      activeFilter = e.target.value;
+      applyFilter();
     });
 
     // Past events toggle
@@ -2190,38 +2212,22 @@
       renderFirmCards(filtered);
     }
 
-    // Wire up firm filter pills
-    document.querySelectorAll('[data-filter-type]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-filter-type]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        firmFilters.type = btn.dataset.filterType;
-        applyFirmFilters();
-      });
+    // Wire up firm filter dropdowns
+    document.getElementById('firmFilterType').addEventListener('change', (e) => {
+      firmFilters.type = e.target.value;
+      applyFirmFilters();
     });
-    document.querySelectorAll('[data-filter-spec]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-filter-spec]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        firmFilters.spec = btn.dataset.filterSpec;
-        applyFirmFilters();
-      });
+    document.getElementById('firmFilterSpec').addEventListener('change', (e) => {
+      firmFilters.spec = e.target.value;
+      applyFirmFilters();
     });
-    document.querySelectorAll('[data-filter-hiring]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-filter-hiring]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        firmFilters.hiring = btn.dataset.filterHiring;
-        applyFirmFilters();
-      });
+    document.getElementById('firmFilterHiring').addEventListener('change', (e) => {
+      firmFilters.hiring = e.target.value;
+      applyFirmFilters();
     });
-    document.querySelectorAll('[data-sort]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        firmFilters.sort = btn.dataset.sort;
-        applyFirmFilters();
-      });
+    document.getElementById('firmSort').addEventListener('change', (e) => {
+      firmFilters.sort = e.target.value;
+      applyFirmFilters();
     });
 
     fetch(FIREBASE_DB_URL + '/firms.json')
@@ -2254,23 +2260,24 @@
     function renderOpportunities() {
       const grid = document.getElementById('opportunitiesGrid');
       updateOppsCount();
-      let filtered = allOpportunities.filter(o => !isOpportunityExpired(o));
+      let filtered = showPastOpps ? allOpportunities : allOpportunities.filter(o => !isOpportunityExpired(o));
       if (activeOppFilter !== 'all') {
         filtered = filtered.filter(o => (o.type || '').toLowerCase() === activeOppFilter);
       }
-
-      if (!filtered || filtered.length === 0) {
-        grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">No opportunities in this category right now — check back soon!</p>';
-        return;
-      }
-
-      // Sort: items with deadlines first (soonest first), then no-deadline items
+      // sort: active first, expired after; within each, soonest deadlines first
       filtered.sort((a, b) => {
+        const aExp = isOpportunityExpired(a), bExp = isOpportunityExpired(b);
+        if (aExp !== bExp) return aExp ? 1 : -1;
         if (a.deadline && b.deadline) return new Date(a.deadline) - new Date(b.deadline);
         if (a.deadline) return -1;
         if (b.deadline) return 1;
         return (a.title || '').localeCompare(b.title || '');
       });
+
+      if (!filtered || filtered.length === 0) {
+        grid.innerHTML = '<p style="color: var(--text-light); font-size: 0.95rem;">No opportunities in this category right now — check back soon!</p>';
+        return;
+      }
 
       grid.innerHTML = filtered.map(opp => {
         const type = (opp.type || 'scholarship').toLowerCase();
@@ -2287,7 +2294,9 @@
         if (opp.amount) metaParts.push(opp.amount);
         const metaHtml = metaParts.length ? '<div class="opportunity-meta">' + metaParts.join(' &middot; ') + '</div>' : '';
 
-        return '<div class="opportunity-card fade-in">' +
+        const isPast = isOpportunityExpired(opp);
+        const pastClass = isPast ? ' past' : '';
+        return '<div class="opportunity-card fade-in' + pastClass + '">' +
           '<div class="opportunity-header">' +
             '<h3>' + (opp.title || '') + '</h3>' +
             '<span class="opportunity-tag ' + type + '">' + typeLabel + '</span>' +
@@ -2300,13 +2309,16 @@
       grid.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
-    document.querySelectorAll('.opportunity-filter').forEach(filter => {
-      filter.addEventListener('click', () => {
-        document.querySelectorAll('.opportunity-filter').forEach(f => f.classList.remove('active'));
-        filter.classList.add('active');
-        activeOppFilter = filter.dataset.filter;
-        renderOpportunities();
-      });
+    document.getElementById('opportunityFilterSelect').addEventListener('change', (e) => {
+      activeOppFilter = e.target.value;
+      renderOpportunities();
+    });
+
+    let showPastOpps = false;
+    document.getElementById('togglePastOpps').addEventListener('click', () => {
+      showPastOpps = !showPastOpps;
+      document.getElementById('togglePastOpps').textContent = showPastOpps ? 'Hide past opportunities' : 'Show past opportunities';
+      renderOpportunities();
     });
 
     fetch(FIREBASE_DB_URL + '/opportunities.json')
