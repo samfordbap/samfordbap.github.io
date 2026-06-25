@@ -1429,12 +1429,12 @@
             const d = new Date(opp.deadline + 'T00:00:00');
             dateStr = ' &middot; Deadline ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           }
-          const meta = [opp.organization, opp.amount].filter(Boolean).join(' &middot; ');
+          const meta = [opp.organization, opp.amount].filter(Boolean).map(escapeHtml).join(' &middot; ');
           const postedByHtml = opp.postedBy ? `<div class="event-list-posted-by">Posted by ${escapeHtml(opp.postedBy)}</div>` : '';
           return `<div class="event-list-item">
             <div class="event-list-info">
               <h4>${escapeHtml(opp.title)}</h4>
-              <span class="event-list-meta">${escapeHtml(meta)}${dateStr}</span>
+              <span class="event-list-meta">${meta}${dateStr}</span>
               ${postedByHtml}
             </div>
             <span class="event-list-tag" style="background:rgba(196,163,90,0.15);color:#8B7332;">${type}</span>
