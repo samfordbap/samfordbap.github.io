@@ -186,7 +186,10 @@
     }
 
     .section-collapse > summary::-webkit-details-marker { display: none; }
-    .section-collapse > summary:hover { opacity: 0.85; }
+
+    @media (hover: hover) {
+      .section-collapse > summary:hover { opacity: 0.85; }
+    }
 
     .section-collapse-header-text {
       flex: 1;
@@ -229,13 +232,17 @@
       margin-top: 1.25rem;
     }
 
-    .section-collapse > summary:hover .section-collapse-chevron {
-      background: var(--navy);
-      color: var(--white);
-      border-color: var(--navy);
+    @media (hover: hover) {
+      .section-collapse > summary:hover .section-collapse-chevron,
+      .faq-item summary:hover .section-collapse-chevron {
+        background: var(--navy);
+        color: var(--white);
+        border-color: var(--navy);
+      }
     }
 
-    .section-collapse[open] > summary .section-collapse-chevron {
+    .section-collapse[open] > summary .section-collapse-chevron,
+    .faq-item[open] summary .section-collapse-chevron {
       transform: rotate(180deg);
       background: var(--navy);
       color: var(--white);
@@ -801,20 +808,19 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .faq-item summary:hover { color: var(--crimson); }
+    @media (hover: hover) {
+      .faq-item summary:hover { color: var(--crimson); }
+    }
 
     .faq-item summary::-webkit-details-marker { display: none; }
 
-    .faq-item summary::after {
-      content: '+';
-      font-size: 1.25rem;
-      color: var(--gold);
-      font-weight: 400;
-      transition: transform 0.2s;
-    }
-
-    .faq-item[open] summary::after {
-      content: '−';
+    /* Reuse the section dropdown chevron, sized down for the compact FAQ rows */
+    .faq-item summary .section-collapse-chevron {
+      width: 32px;
+      height: 32px;
+      font-size: 0.7rem;
+      margin-top: 0;
+      margin-left: 1rem;
     }
 
     .faq-answer {
@@ -1808,23 +1814,23 @@
           <h3 style="margin-top: 2.5rem;">Frequently Asked Questions</h3>
           <div class="faq-list">
             <details class="faq-item">
-              <summary>What's the time commitment?</summary>
+              <summary>What's the time commitment?<span class="section-collapse-chevron">▼</span></summary>
               <div class="faq-answer">Members are expected to attend chapter meetings and complete a minimum number of service and professional development hours each semester. Most members find the time commitment manageable alongside coursework — typically 2–4 hours per week during the semester.</div>
             </details>
             <details class="faq-item">
-              <summary>Do I have to be on the CPA track?</summary>
+              <summary>Do I have to be on the CPA track?<span class="section-collapse-chevron">▼</span></summary>
               <div class="faq-answer">No. BAP is open to accounting, finance, and information systems students. While many members pursue the CPA, others go into corporate finance, consulting, government, or graduate school. The chapter provides value regardless of your post-graduation path.</div>
             </details>
             <details class="faq-item">
-              <summary>Are there dues or fees?</summary>
+              <summary>Are there dues or fees?<span class="section-collapse-chevron">▼</span></summary>
               <div class="faq-answer">Yes. New members pay a one-time national induction fee, and there are modest chapter dues each semester to cover events and operations. Specific amounts are shared with invitees during onboarding.</div>
             </details>
             <details class="faq-item">
-              <summary>When are members selected?</summary>
+              <summary>When are members selected?<span class="section-collapse-chevron">▼</span></summary>
               <div class="faq-answer">Mrs. Newberry reviews GPAs and extends invitations at the end of each semester, once Intermediate Accounting I grades are finalized. Most students join during their junior year.</div>
             </details>
             <details class="faq-item">
-              <summary>Can I get involved before being inducted?</summary>
+              <summary>Can I get involved before being inducted?<span class="section-collapse-chevron">▼</span></summary>
               <div class="faq-answer">Yes — that's exactly what the Pre-Member Track is for. Freshmen and sophomores can join study groups, get paired with a mentor, and attend select events well before they're formally invited. Many of our workshops, panels, and study groups are open to all accounting and finance students, so come to anything that interests you.</div>
             </details>
           </div>
