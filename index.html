@@ -1907,6 +1907,11 @@
   <script>
     const FIREBASE_DB_URL = 'https://samford-bap-default-rtdb.firebaseio.com';
 
+    // Convert a Firebase object keyed by id into an array of records.
+    function dbToArray(data) {
+      return Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    }
+
     // Navbar scroll effect
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
@@ -2252,7 +2257,7 @@
       .then(r => r.json())
       .then(data => {
         if (!data) { renderFirmCards([]); return; }
-        allFirms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        allFirms = dbToArray(data);
         applyFirmFilters();
         updateLastActivity();
       })
@@ -2343,7 +2348,7 @@
       .then(r => r.json())
       .then(data => {
         if (!data) { allOpportunities = []; renderOpportunities(); return; }
-        allOpportunities = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        allOpportunities = dbToArray(data);
         renderOpportunities();
         updateLastActivity();
       })
@@ -2354,7 +2359,7 @@
       .then(r => r.json())
       .then(data => {
         if (!data) { allEvents = []; renderEvents(); renderUpcomingServiceEvents(); return; }
-        allEvents = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        allEvents = dbToArray(data);
         renderEvents();
         renderUpcomingServiceEvents();
         renderAnnouncementBanner();

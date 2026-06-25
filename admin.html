@@ -978,6 +978,40 @@
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
+    // ── Firebase REST helpers (shared by Events / Firms / Opportunities) ──
+    // Convert a Firebase object keyed by id into an array of records.
+    function dbToArray(data) {
+      return Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    }
+
+    // GET a path and return the parsed JSON (path begins with '/').
+    async function apiGet(path) {
+      const res = await fetch(FIREBASE_DB_URL + path);
+      return res.json();
+    }
+
+    // Create (POST) when there is no id, otherwise update in place (PUT).
+    function apiSave(collection, id, data) {
+      const url = FIREBASE_DB_URL + '/' + collection + (id ? '/' + id : '') + '.json';
+      return fetch(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
+    }
+
+    function apiDelete(collection, id) {
+      return fetch(FIREBASE_DB_URL + '/' + collection + '/' + id + '.json', { method: 'DELETE' });
+    }
+
+    // Shared confirm → delete → toast → reload flow used by all three lists.
+    async function deleteEntity(collection, id, label, noun, reload) {
+      if (!confirm('Delete "' + label + '"? This cannot be undone.')) return;
+      try {
+        await apiDelete(collection, id);
+        showToast(noun + ' deleted.');
+        reload();
+      } catch (err) {
+        showToast('Error deleting ' + noun.toLowerCase() + '.');
+      }
+    }
+
     // Login
     const loginScreen = document.getElementById('loginScreen');
     const adminPanel = document.getElementById('adminPanel');
@@ -1072,19 +1106,8 @@
       const eventData = { title, date, time, category, location, description, postedBy, updatedAt: Date.now() };
 
       try {
-        if (editId) {
-          await fetch(FIREBASE_DB_URL + '/events/' + editId + '.json', {
-            method: 'PUT',
-            body: JSON.stringify(eventData)
-          });
-          showToast('Event updated!');
-        } else {
-          await fetch(FIREBASE_DB_URL + '/events.json', {
-            method: 'POST',
-            body: JSON.stringify(eventData)
-          });
-          showToast('Event added!');
-        }
+        await apiSave('events', editId, eventData);
+        showToast(editId ? 'Event updated!' : 'Event added!');
         eventForm.classList.remove('visible');
         loadEvents();
       } catch (err) {
@@ -1098,8 +1121,7 @@
       const countEl = document.getElementById('eventCount');
 
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/events.json');
-        const data = await res.json();
+        const data = await apiGet('/events.json');
 
         if (!data) {
           listEl.innerHTML = '<div class="empty-state">No events yet. Click "+ Add Event" to create one.</div>';
@@ -1107,7 +1129,7 @@
           return;
         }
 
-        const events = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        const events = dbToArray(data);
         events.sort((a, b) => new Date(a.date) - new Date(b.date));
         countEl.textContent = '(' + events.length + ')';
 
@@ -1145,8 +1167,7 @@
 
     async function editEvent(id) {
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/events/' + id + '.json');
-        const ev = await res.json();
+        const ev = await apiGet('/events/' + id + '.json');
         if (!ev) return;
 
         document.getElementById('editId').value = id;
@@ -1166,15 +1187,8 @@
       }
     }
 
-    async function deleteEvent(id, title) {
-      if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
-      try {
-        await fetch(FIREBASE_DB_URL + '/events/' + id + '.json', { method: 'DELETE' });
-        showToast('Event deleted.');
-        loadEvents();
-      } catch (err) {
-        showToast('Error deleting event.');
-      }
+    function deleteEvent(id, title) {
+      return deleteEntity('events', id, title, 'Event', loadEvents);
     }
 
     // ── Firms Management ──
@@ -1254,19 +1268,8 @@
       const firmData = { name, type, location, size, description, specialties, website, hiring, postedBy, updatedAt: Date.now() };
 
       try {
-        if (editId) {
-          await fetch(FIREBASE_DB_URL + '/firms/' + editId + '.json', {
-            method: 'PUT',
-            body: JSON.stringify(firmData)
-          });
-          showToast('Firm updated!');
-        } else {
-          await fetch(FIREBASE_DB_URL + '/firms.json', {
-            method: 'POST',
-            body: JSON.stringify(firmData)
-          });
-          showToast('Firm added!');
-        }
+        await apiSave('firms', editId, firmData);
+        showToast(editId ? 'Firm updated!' : 'Firm added!');
         firmForm.classList.remove('visible');
         loadFirms();
       } catch (err) {
@@ -1279,8 +1282,7 @@
       const countEl = document.getElementById('firmCount');
 
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/firms.json');
-        const data = await res.json();
+        const data = await apiGet('/firms.json');
 
         if (!data) {
           listEl.innerHTML = '<div class="empty-state">No firms yet. Click "+ Add Firm" to create one.</div>';
@@ -1288,7 +1290,7 @@
           return;
         }
 
-        const firms = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        const firms = dbToArray(data);
         firms.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
         countEl.textContent = '(' + firms.length + ')';
 
@@ -1318,8 +1320,7 @@
 
     async function editFirm(id) {
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/firms/' + id + '.json');
-        const firm = await res.json();
+        const firm = await apiGet('/firms/' + id + '.json');
         if (!firm) return;
 
         document.getElementById('firmEditId').value = id;
@@ -1340,15 +1341,8 @@
       }
     }
 
-    async function deleteFirm(id, name) {
-      if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
-      try {
-        await fetch(FIREBASE_DB_URL + '/firms/' + id + '.json', { method: 'DELETE' });
-        showToast('Firm deleted.');
-        loadFirms();
-      } catch (err) {
-        showToast('Error deleting firm.');
-      }
+    function deleteFirm(id, name) {
+      return deleteEntity('firms', id, name, 'Firm', loadFirms);
     }
 
     // ── Opportunities Management ──
@@ -1397,19 +1391,8 @@
       const oppData = { title, type, deadline, organization, amount, description, link, postedBy, updatedAt: Date.now() };
 
       try {
-        if (editId) {
-          await fetch(FIREBASE_DB_URL + '/opportunities/' + editId + '.json', {
-            method: 'PUT',
-            body: JSON.stringify(oppData)
-          });
-          showToast('Opportunity updated!');
-        } else {
-          await fetch(FIREBASE_DB_URL + '/opportunities.json', {
-            method: 'POST',
-            body: JSON.stringify(oppData)
-          });
-          showToast('Opportunity added!');
-        }
+        await apiSave('opportunities', editId, oppData);
+        showToast(editId ? 'Opportunity updated!' : 'Opportunity added!');
         oppForm.classList.remove('visible');
         loadOpportunities();
       } catch (err) {
@@ -1422,8 +1405,7 @@
       const countEl = document.getElementById('oppCount');
 
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/opportunities.json');
-        const data = await res.json();
+        const data = await apiGet('/opportunities.json');
 
         if (!data) {
           listEl.innerHTML = '<div class="empty-state">No opportunities yet. Click "+ Add Opportunity" to create one.</div>';
@@ -1431,7 +1413,7 @@
           return;
         }
 
-        const opps = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        const opps = dbToArray(data);
         opps.sort((a, b) => {
           if (a.deadline && b.deadline) return new Date(a.deadline) - new Date(b.deadline);
           if (a.deadline) return -1;
@@ -1469,8 +1451,7 @@
 
     async function editOpp(id) {
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/opportunities/' + id + '.json');
-        const opp = await res.json();
+        const opp = await apiGet('/opportunities/' + id + '.json');
         if (!opp) return;
 
         document.getElementById('oppEditId').value = id;
@@ -1490,15 +1471,8 @@
       }
     }
 
-    async function deleteOpp(id, title) {
-      if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
-      try {
-        await fetch(FIREBASE_DB_URL + '/opportunities/' + id + '.json', { method: 'DELETE' });
-        showToast('Opportunity deleted.');
-        loadOpportunities();
-      } catch (err) {
-        showToast('Error deleting opportunity.');
-      }
+    function deleteOpp(id, title) {
+      return deleteEntity('opportunities', id, title, 'Opportunity', loadOpportunities);
     }
 
     // ── RSVP Viewer ──
@@ -1512,8 +1486,7 @@
       document.getElementById('rsvpViewerModal').classList.add('open');
 
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/rsvps/' + eventId + '.json');
-        const data = await res.json();
+        const data = await apiGet('/rsvps/' + eventId + '.json');
         const listEl = document.getElementById('rsvpViewerList');
 
         if (!data) {
@@ -1521,7 +1494,7 @@
           return;
         }
 
-        const rsvps = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        const rsvps = dbToArray(data);
         rsvps.sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
 
         currentRsvpEmails = rsvps.map(r => r.email).filter(e => e && e.includes('@'));
@@ -1568,8 +1541,7 @@
     // ── Duplicate Event ──
     async function duplicateEvent(id) {
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/events/' + id + '.json');
-        const ev = await res.json();
+        const ev = await apiGet('/events/' + id + '.json');
         if (!ev) return;
 
         document.getElementById('editId').value = '';
@@ -1597,8 +1569,7 @@
 
     async function loadSettings() {
       try {
-        const res = await fetch(FIREBASE_DB_URL + '/settings.json');
-        const s = await res.json() || {};
+        const s = await apiGet('/settings.json') || {};
         document.getElementById('settingsAnnouncement').value = s.announcement || '';
         document.getElementById('settingsAnnouncementActive').value = s.announcementActive ? 'true' : 'false';
         document.getElementById('settingsAutoToday').value = (s.autoTodayEvents === false) ? 'false' : 'true';
