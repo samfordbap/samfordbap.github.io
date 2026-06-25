@@ -862,6 +862,61 @@
 
     .advisor-link:hover { text-decoration: underline; }
 
+    .premember-card {
+      margin-top: 1.5rem;
+      padding: 1.75rem;
+      background: var(--navy);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .premember-card .premember-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .premember-card h4 {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--white);
+      margin-bottom: 0.65rem;
+    }
+
+    .premember-card p {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .premember-list {
+      list-style: none;
+      margin: 0;
+    }
+
+    .premember-list li {
+      font-size: 0.9rem;
+      padding: 0.4rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .premember-list li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold-light);
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+
     /* ── Resources ── */
     .resources {
       background: var(--white);
@@ -1786,6 +1841,18 @@
           <h3>How Members Are Selected</h3>
           <p>There's no formal application. After students complete Intermediate Accounting I, our faculty advisor Mrs. Newberry reviews GPAs and extends personal invitations to qualifying students. If you meet the criteria, expect an email from her.</p>
 
+          <div class="premember-card">
+            <div class="premember-label">New This Year</div>
+            <h4>Not Eligible Yet? Start with the Pre-Member Track.</h4>
+            <p>You don't have to wait until junior year to be part of BAP. Our Pre-Member Track is built for freshmen and sophomores — especially students in Principles and Intermediate Accounting — to get connected early and hit the ground running once they're invited.</p>
+            <ul class="premember-list">
+              <li>Open study groups before Principles &amp; Intermediate Accounting exams</li>
+              <li>Mentorship pairing with a current BAP member</li>
+              <li>Invitations to select workshops, panels, and socials</li>
+              <li>Recognition as a <strong>BAP Affiliate</strong> leading into formal induction</li>
+            </ul>
+          </div>
+
           <div class="advisor-card">
             <div class="advisor-label">Faculty Advisor</div>
             <div class="advisor-name">Michelle R. Newberry, MAcc, CPA</div>
@@ -1813,7 +1880,7 @@
             </details>
             <details class="faq-item">
               <summary>Can I get involved before being inducted?</summary>
-              <div class="faq-answer">Many of our events — workshops, panels, and study groups — are open to all accounting and finance students. Watch the events section above and feel free to come to anything that interests you, even before you're officially a member.</div>
+              <div class="faq-answer">Yes — that's exactly what the Pre-Member Track is for. Freshmen and sophomores can join study groups, get paired with a mentor, and attend select events well before they're formally invited. Many of our workshops, panels, and study groups are open to all accounting and finance students, so come to anything that interests you.</div>
             </details>
           </div>
         </div>
